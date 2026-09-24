@@ -1,0 +1,134 @@
+# Held-out test set: written AFTER the rules were frozen (commit "Freeze rules for held-out evaluation"),
+# from areas not in requirements.yaml (warehouse, calibration, environmental monitoring, complaints,
+# serialization, supplier qualification, pharmacovigilance, clinical documents, equipment logbooks).
+# Same defect types and labelling approach as requirements.yaml. Rules were not changed after this file was written.
+
+items:
+  # --- warehouse and materials ---
+  - text: Materials in quarantine cannot be issued to production.
+    gold: []
+  - text: Released materials are moved to the approved area promptly.
+    gold: [vague_term]
+  - text: The warehouse clerk scans the container label before issuing material; an unreleased container is refused.
+    gold: []
+  - text: Expired materials should be blocked automatically.
+    gold: [weak_modal]
+  - text: Material status is changed from quarantine to released.
+    gold: [missing_actor, gxp_control_missing]
+  - text: QA changes the material status from quarantine to released with an e-signature.
+    gold: []
+  - text: Retest dates are calculated from the date of receipt using the retest interval in the material master.
+    gold: []
+  - text: Stock levels must be accurate.
+    gold: [vague_term]
+  # --- calibration and maintenance ---
+  - text: Instruments that are overdue for calibration cannot be selected in a batch step.
+    gold: []
+  - text: Calibration certificates are uploaded and approved.
+    gold: [missing_actor]
+  - text: The metrology engineer approves each calibration certificate before the instrument returns to use.
+    gold: []
+  - text: Calibration intervals can be extended by the engineer.
+    gold: [gxp_control_missing]
+  - text: A calibration interval can be extended once, by up to 30 days, with a documented justification approved by QA.
+    gold: []
+  - text: Preventive maintenance is scheduled at suitable intervals.
+    gold: [vague_term]
+  - text: It is flagged on the equipment dashboard when maintenance is overdue.
+    gold: [ambiguous_reference]
+  - text: Maintenance work orders are closed by the technician and verified by the area supervisor.
+    gold: []
+  # --- environmental monitoring ---
+  - text: Particle counts above the alert limit trigger an alarm to the area supervisor within 1 minute.
+    gold: []
+  - text: Excursions must be investigated.
+    gold: [missing_actor]
+  - text: Microbiology can edit plate counts after they are entered.
+    gold: [gxp_control_missing]
+  - text: Viable monitoring results are trended monthly per room and sampling point.
+    gold: []
+  - text: The trend chart should highlight unusual results.
+    gold: [weak_modal, vague_term]
+  - text: Settle plates are exposed for no more than 4 hours.
+    gold: []
+  - text: Sampling locations are TBD per room classification.
+    gold: [placeholder]
+  # --- complaints and recalls ---
+  - text: Every complaint is logged within 1 working day of receipt.
+    gold: []
+  - text: Complaints are acknowledged to the customer quickly.
+    gold: [vague_term]
+  - text: The complaint handler may close a complaint with no investigation if it is not product-related.
+    gold: [weak_modal]
+  - text: A complaint can be reopened by the complaint owner.
+    gold: [gxp_control_missing]
+  - text: Recall decisions are documented and approved by the quality head with an e-signature.
+    gold: []
+  - text: Customers are informed of a recall within the required timeframe.
+    gold: [missing_value]
+  - text: This must include the batch number and the reason for the recall.
+    gold: [ambiguous_reference]
+  # --- serialization ---
+  - text: Each saleable pack receives a unique serial number that is never reused.
+    gold: []
+  - text: Serial numbers can be decommissioned by the packaging operator.
+    gold: [gxp_control_missing]
+  - text: Aggregation data is sent to the national repository without delay.
+    gold: [vague_term]
+  - text: Aggregation data is sent to the national repository within 15 minutes of the case being sealed.
+    gold: []
+  - text: The line should reject packs with unreadable codes.
+    gold: [weak_modal]
+  - text: The vision system rejects packs whose 2D code grade is below C, and logs each rejection.
+    gold: []
+  # --- supplier qualification ---
+  - text: Suppliers are requalified every 3 years or after a major quality event.
+    gold: []
+  - text: New suppliers are approved before first use.
+    gold: [missing_actor]
+  - text: The supplier questionnaire covers quality, regulatory, logistics, etc.
+    gold: [vague_term]
+  - text: A supplier can be removed from the approved list by purchasing.
+    gold: [gxp_control_missing]
+  - text: Audit findings are closed within the agreed period.
+    gold: [missing_value]
+  - text: The supplier scorecard is updated every quarter from delivery, complaint and audit data.
+    gold: []
+  # --- pharmacovigilance and clinical ---
+  - text: Serious adverse events are reported to the authority within 15 calendar days.
+    gold: []
+  - text: Case narratives must be clear and complete.
+    gold: [vague_term]
+  - text: The safety physician signs each medical assessment electronically.
+    gold: []
+  - text: Case data can be changed after submission.
+    gold: [gxp_control_missing]
+  - text: Trial master file documents are filed within 5 working days of finalisation.
+    gold: []
+  - text: Essential documents are QC-checked.
+    gold: [missing_actor]
+  - text: The eTMF must support all relevant document types.
+    gold: [vague_term]
+  - text: Site staff might need access to the investigator folder.
+    gold: [weak_modal]
+  # --- equipment logbooks and cleaning validation ---
+  - text: Each use, cleaning and maintenance event is entered in the equipment logbook with user, date and time.
+    gold: []
+  - text: Logbook entries are reviewed by production.
+    gold: []
+  - text: A logbook entry can be deleted by the supervisor.
+    gold: [gxp_control_missing]
+  - text: Swab results must be below the acceptance limit.
+    gold: [missing_value]
+  - text: Swab results must be below 10 ppm of the previous product.
+    gold: []
+  - text: Cleaning must be effective.
+    gold: [vague_term]
+  - text: The dirty hold time is to be defined by validation.
+    gold: [placeholder]
+  - text: Equipment must be cleaned within 24 hours of batch end.
+    gold: []
+  - text: Cleaning records are verified before the equipment is released for the next batch.
+    gold: [missing_actor]
+  - text: The cleaning log is simple to fill in on the shop floor.
+    gold: [vague_term]
