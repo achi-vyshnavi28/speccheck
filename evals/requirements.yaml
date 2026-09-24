@@ -1,0 +1,225 @@
+# Labelled requirements for measuring SpecCheck.
+# Each item: the requirement text and the defects a careful QA/validation reviewer would raise ("gold").
+# Labels follow human judgement, not what the rules can detect, so some defects are expected to be missed
+# (e.g. vague words outside the rule list). Written and labelled by the author; a second independent
+# labeller is the obvious next step (see README, "Limitations").
+#
+# Defect types:
+#   vague_term           no pass/fail criterion ("quickly", "user-friendly", "as needed", "modern")
+#   placeholder          not decided (TBD, TODO)
+#   weak_modal           unclear if mandatory ("should", "may")
+#   missing_value        a limit/time/quantity is implied but no value is given
+#   ambiguous_reference  starts with a pronoun whose referent is unclear
+#   missing_actor        a human action (approve, verify, review...) with no role
+#   gxp_control_missing  GMP-relevant change (override, delete, edit, reject...) without reason / e-signature / audit trail
+
+items:
+  # --- electronic batch record ---
+  - text: The operator records the dispensed weight of each raw material and confirms it with an e-signature.
+    gold: []
+  - text: Out-of-specification values are highlighted in red and raise a deviation automatically.
+    gold: []
+  - text: The system should warn the operator when a value is close to the limit.
+    gold: [weak_modal, vague_term]
+  - text: Critical steps are verified before the batch continues.
+    gold: [missing_actor]
+  - text: A critical step must be verified by a second person who did not record it.
+    gold: []
+  - text: Entries must be recorded within the allowed time window after observation.
+    gold: [missing_value]
+  - text: Entries must be recorded no later than 30 minutes after the observation time.
+    gold: []
+  - text: The supervisor can edit a recorded value.
+    gold: [gxp_control_missing]
+  - text: A recorded value can be corrected only with a reason of at least 10 characters; the original stays visible.
+    gold: []
+  - text: It must be shown on the batch summary page.
+    gold: [ambiguous_reference]
+  - text: The batch record loads quickly on shop-floor tablets.
+    gold: [vague_term]
+  - text: The batch record page loads in under 2 seconds (p95) on the reference tablet.
+    gold: []
+  - text: QA can release a batch only when all steps are complete, verified and no deviation is open.
+    gold: []
+  - text: The batch is released after review.
+    gold: [missing_actor]
+  - text: Operators may skip non-critical steps.
+    gold: [weak_modal]
+  - text: Released batch records cannot be changed by any user.
+    gold: []
+  - text: The system displays the appropriate warning when a scale is out of calibration.
+    gold: [vague_term]
+  - text: Weighing results are transferred from the balance automatically; manual entry is refused for critical weights.
+    gold: []
+  - text: TBD how yield is calculated for partial batches.
+    gold: [placeholder]
+  - text: The yield must be between the limits defined in the master record.
+    gold: []
+  # --- deviations and CAPA ---
+  - text: QA can close a deviation after entering an investigation summary and signing.
+    gold: []
+  - text: Deviations are closed once the investigation is complete.
+    gold: [missing_actor]
+  - text: The deviation owner can delete a deviation raised in error.
+    gold: [gxp_control_missing]
+  - text: A deviation raised in error can be voided by QA with a reason and e-signature; it stays in the audit trail.
+    gold: []
+  - text: CAPA actions must be completed in a timely manner.
+    gold: [vague_term]
+  - text: CAPA actions must be completed within 30 days of approval unless QA grants an extension.
+    gold: []
+  - text: The CAPA effectiveness check is performed after a period defined by QA.
+    gold: [missing_value]
+  - text: The system should send reminders before a CAPA is due.
+    gold: [weak_modal, missing_value]
+  - text: The system sends an email reminder 7 days and 1 day before a CAPA due date.
+    gold: []
+  - text: Root cause categories include equipment, material, method, people, etc.
+    gold: [vague_term]
+  - text: Deviations are classified as minor, major or critical by QA.
+    gold: []
+  - text: Critical deviations are escalated to the site head as soon as possible.
+    gold: [vague_term]
+  - text: Critical deviations are escalated to the site head by email within 24 hours of classification.
+    gold: []
+  - text: They are notified when the deviation is classified as critical.
+    gold: [ambiguous_reference]
+  - text: The investigation report can be modified after approval.
+    gold: [gxp_control_missing]
+  # --- change control ---
+  - text: Every change request needs an impact assessment and approval before implementation.
+    gold: [missing_actor]
+  - text: The change request is approved by QA and the system owner before implementation.
+    gold: []
+  - text: Minor changes may be implemented without QA approval.
+    gold: [weak_modal]
+  - text: The system administrator can override the approval workflow if needed.
+    gold: [vague_term, gxp_control_missing]
+  - text: Emergency changes are documented retrospectively within 2 working days with QA approval.
+    gold: []
+  - text: The change history must be easy to review.
+    gold: [vague_term]
+  - text: The change history shows who changed what, when, and why, for every change.
+    gold: []
+  # --- document management ---
+  - text: Only the latest approved version of an SOP is visible to operators.
+    gold: []
+  - text: Superseded SOPs are archived and retained for the required period.
+    gold: [missing_value]
+  - text: Superseded SOPs are retained for 10 years after withdrawal.
+    gold: []
+  - text: The author can remove a document from the library.
+    gold: [gxp_control_missing]
+  - text: Documents are reviewed periodically.
+    gold: [vague_term, missing_actor]
+  - text: Each SOP is reviewed by its owner every 2 years; overdue reviews are shown on the QA dashboard.
+    gold: []
+  - text: This should be printed with a watermark.
+    gold: [ambiguous_reference, weak_modal]
+  - text: Printed copies carry a watermark with the print date, the printing user and "uncontrolled copy".
+    gold: []
+  - text: The search must return relevant documents.
+    gold: [vague_term]
+  - text: Document numbering format is TODO.
+    gold: [placeholder]
+  # --- training records ---
+  - text: Users cannot execute a batch step unless they are trained on the current SOP version.
+    gold: []
+  - text: Training records are signed by the trainee and the trainer.
+    gold: []
+  - text: Training must be completed before the deadline.
+    gold: [missing_value]
+  - text: The training matrix must be flexible enough for all departments.
+    gold: [vague_term]
+  - text: Training assignments are generated automatically when a new SOP version becomes effective.
+    gold: []
+  - text: A trainer can change a failed assessment result to passed.
+    gold: [gxp_control_missing]
+  - text: The dashboard must look modern.
+    gold: [vague_term]
+  - text: Training completion should be tracked.
+    gold: [weak_modal]
+  # --- LIMS / lab ---
+  - text: Analysts enter results against the specification; results outside the limits are flagged.
+    gold: []
+  - text: Results are checked before they are reported.
+    gold: [missing_actor]
+  - text: A second analyst reviews every result before it is reported to QA.
+    gold: []
+  - text: Analysts can reject a sample result and re-test.
+    gold: [gxp_control_missing]
+  - text: Invalidating a result requires a laboratory investigation reference and QA e-signature.
+    gold: []
+  - text: Instrument data must be imported correctly.
+    gold: [vague_term]
+  - text: Stability samples are pulled at the defined time points.
+    gold: []
+  - text: The sample queue should be sorted sensibly.
+    gold: [weak_modal, vague_term]
+  - text: Samples must be tested within the hold time.
+    gold: [missing_value]
+  - text: The chromatography integration parameters can be changed by the analyst.
+    gold: [gxp_control_missing]
+  # --- access and security ---
+  - text: Accounts lock after 3 consecutive failed login attempts.
+    gold: []
+  - text: Sessions expire after a period of inactivity.
+    gold: [missing_value]
+  - text: Sessions expire after 15 minutes of inactivity.
+    gold: []
+  - text: Passwords must be strong.
+    gold: [vague_term]
+  - text: Passwords have at least 12 characters and expire every 90 days.
+    gold: []
+  - text: The admin can deactivate a user account.
+    gold: [gxp_control_missing]
+  - text: User accounts are never deleted; a leaver is deactivated with a reason, and the change is audit-trailed.
+    gold: []
+  - text: Role changes are approved before they take effect.
+    gold: [missing_actor]
+  - text: Access rights are reviewed by the system owner every 6 months.
+    gold: []
+  - text: The system must be secure.
+    gold: [vague_term]
+  # --- audit trail and records ---
+  - text: The audit trail records user, date and time, action, old value, new value and reason.
+    gold: []
+  - text: The audit trail cannot be edited or deleted by any user, including administrators.
+    gold: []
+  - text: Audit trail entries are kept as long as needed.
+    gold: [vague_term]
+  - text: QA reviews the audit trail of each batch before release.
+    gold: []
+  - text: The audit trail report may be exported to PDF.
+    gold: [weak_modal]
+  - text: The audit trail export must include all relevant fields.
+    gold: [vague_term]
+  - text: Electronic signatures show the printed name, date, time and meaning of the signature.
+    gold: []
+  - text: It must be linked to the record it signs.
+    gold: [ambiguous_reference]
+  # --- reporting, integration and performance ---
+  - text: The weekly quality report is generated every Monday at 06:00 and emailed to QA managers.
+    gold: []
+  - text: Reports must support large data volumes.
+    gold: [vague_term]
+  - text: The system handles up to 200 concurrent users with p95 response under 3 seconds.
+    gold: []
+  - text: The ERP interface should be robust.
+    gold: [weak_modal, vague_term]
+  - text: Failed ERP messages are retried 3 times and then shown to the system owner for manual resolution.
+    gold: []
+  - text: Data is backed up regularly.
+    gold: [vague_term]
+  - text: A full backup runs daily at 01:00 and a restore is tested every quarter.
+    gold: []
+  - text: The report layout is to be confirmed with the customer.
+    gold: [placeholder]
+  - text: The dashboard shows open deviations, overdue CAPAs and batches awaiting release.
+    gold: []
+  - text: Users can filter the deviation list by status, severity, date range and product.
+    gold: []
+  - text: The system must be intuitive for shop-floor users.
+    gold: [vague_term]
+  - text: Operators complete a batch step in no more than 3 clicks after scanning the material label.
+    gold: []
