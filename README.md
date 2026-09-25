@@ -53,6 +53,18 @@ second reviewer whose output is always marked *draft* for a person to confirm.
 test case for were exactly the ones the rules flagged as vague ("quickly and user-friendly", "handled
 appropriately", "should be fast", "TBD"). Two independent methods agreeing on the same untestable lines.
 
+## Questions answered with SQL
+The labels and every system's predictions are loaded into SQLite (`python -m evals.to_sqlite` → `evals/eval.sqlite`)
+and questioned in [`evals/questions.sql`](evals/questions.sql) (CTEs, window functions, anti-joins). Answers are in
+[`evals/sql_answers.md`](evals/sql_answers.md); the totals match the Python evaluation exactly, which cross-checks both.
+
+| Question | Answer |
+|---|---|
+| Where do the rules miss most? (Q2) | Calibration and maintenance (75% of defects missed) and serialization (67%): domain phrasing like "suitable intervals" and "without delay" is not in the vocabulary. That's where to extend it next |
+| What did only the LLM catch? (Q3) | 11 defects, mostly vague terms ("accurate", "effective") and passive actions with no role ("QC-checked") |
+| What does each reviewer cost? (Q4) | On clean requirements the rules raised 0 false alarms in 71; the LLM raised 6 |
+| How much did the rules overfit? (Q5) | Vague-term recall fell from 100% (development) to 45% (held-out); placeholder, weak modal, missing value and pronoun rules held at 100% |
+
 ## Samples and outputs
 | PRD | Stories | Gaps (blocking) | Draft test cases | Outputs |
 |---|---|---|---|---|
