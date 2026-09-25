@@ -49,7 +49,8 @@ with st.sidebar:
     st.header("Input")
     choice = st.radio("PRD source", ["Sample PRD", "Paste your own"])
     if choice == "Sample PRD":
-        name = st.selectbox("Sample", list(SAMPLES), format_func=lambda s: s.replace("_", " "))
+        default = next((i for i, k in enumerate(SAMPLES) if k.startswith("PRD-4.0")), 0)  # the worked example
+        name = st.selectbox("Sample", list(SAMPLES), index=default, format_func=lambda s: s.replace("_", " "))
         text = SAMPLES[name].read_text(encoding="utf-8")
     else:
         name = None
@@ -71,6 +72,10 @@ r: Review = run(text, use_llm=False)
 if not r.stories:
     st.warning("No user stories found. Use headings like `### US-101 Title` followed by bullet criteria.")
     st.stop()
+
+if name:
+    st.info(f"Showing a sample PRD: **{r.title}**. Open the sidebar (» at the top left) to pick another sample, "
+            "paste your own PRD, or turn on AI drafting.")
 
 source = ""
 if use_llm:
