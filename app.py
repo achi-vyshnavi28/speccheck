@@ -19,7 +19,7 @@ from speccheck.pipeline import Review, run
 ROOT = Path(__file__).resolve().parent
 SAMPLES = {p.stem: p for p in sorted((ROOT / "samples").glob("*.md"))}
 
-st.set_page_config(page_title="SpecCheck", page_icon="🧪", layout="wide")
+st.set_page_config(page_title="SpecCheck", page_icon="🧪", layout="wide", initial_sidebar_state="collapsed")
 try:  # Streamlit Cloud secrets → environment (the LLM client reads GEMINI_API_KEY from the environment)
     for k, v in st.secrets.items():
         os.environ.setdefault(k, str(v))
@@ -42,30 +42,30 @@ def draft_with_llm(text: str) -> dict:
 
 
 st.title("SpecCheck")
-st.caption("Finds the requirements a tester can't test, before development starts, and drafts test cases for the "
-           "rest. Built for GxP software (21 CFR Part 11, ALCOA+).")
+st.markdown("##### A review tool for pharma software specs: it finds the requirements nobody can test *before* "
+            "developers build them, and drafts the test cases for the rest.")
+intro = st.container()  # filled once the numbers for the selected spec are known
 
-with st.sidebar:
-    st.header("Input")
-    choice = st.radio("PRD source", ["Sample PRD", "Paste your own"])
-    if choice == "Sample PRD":
+with st.container(border=True):
+    c_src, c_pick, c_ai = st.columns([1, 2, 1])
+    choice = c_src.radio("Spec to review", ["Sample spec", "Paste your own"], label_visibility="visible")
+    if choice == "Sample spec":
         default = next((i for i, k in enumerate(SAMPLES) if k.startswith("PRD-4.0")), 0)  # the worked example
-        name = st.selectbox("Sample", list(SAMPLES), index=default, format_func=lambda s: s.replace("_", " "))
+        name = c_pick.selectbox("Sample", list(SAMPLES), index=default, format_func=lambda s: s.replace("_", " "))
         text = SAMPLES[name].read_text(encoding="utf-8")
     else:
         name = None
-        text = st.text_area("PRD in Markdown", height=320,
-                            placeholder="# PRD title\n\n### US-101 Story title\nAs a ..., I want ..., so ...\n"
-                                        "- acceptance criterion\n- acceptance criterion")
-    use_llm = st.toggle("Draft test cases with AI (Gemini)", value=False, disabled=not HAS_KEY,
-                        help="Rules always run. AI drafting needs GEMINI_API_KEY; samples include saved drafts.")
-    st.markdown("**Format:** stories as `### US-101 Title` (any `ABC-123` id), criteria as bullets.")
-    st.divider()
-    st.markdown("[Source on GitHub](https://github.com/achi-vyshnavi28/speccheck) · "
-                "[How it was evaluated](https://github.com/achi-vyshnavi28/speccheck/tree/main/evals)")
+        text = c_pick.text_area("Spec in Markdown", height=200,
+                                placeholder="# PRD title\n\n### US-101 Story title\nAs a ..., I want ..., so ...\n"
+                                            "- acceptance criterion\n- acceptance criterion")
+    use_llm = c_ai.toggle("Draft test cases with AI", value=False, disabled=not HAS_KEY,
+                          help="Rules always run. AI drafting needs GEMINI_API_KEY; samples include saved AI drafts.")
+    st.caption("Format: stories as `### US-101 Title` (any `ABC-123` id), acceptance criteria as bullets. "
+               "[Source on GitHub](https://github.com/achi-vyshnavi28/speccheck) · "
+               "[How accuracy was measured](https://github.com/achi-vyshnavi28/speccheck/tree/main/evals)")
 
 if not text.strip():
-    st.info("Pick a sample or paste a PRD to start.")
+    st.info("Pick a sample or paste a spec to start.")
     st.stop()
 
 r: Review = run(text, use_llm=False)
@@ -73,28 +73,48 @@ if not r.stories:
     st.warning("No user stories found. Use headings like `### US-101 Title` followed by bullet criteria.")
     st.stop()
 
-if name:
-    st.info(f"Showing a sample PRD: **{r.title}**. Open the sidebar (» at the top left) to pick another sample, "
-            "paste your own PRD, or turn on AI drafting.")
-
 source = ""
 if use_llm:
-    with st.spinner("Drafting test cases with Gemini (about 10 s per story)..."):
+    with st.spinner("Drafting test cases with Gemini (about 20 s for 5 stories)..."):
         out = draft_with_llm(text)
     r.drafts = {k: Drafted.model_validate(v) for k, v in out["drafts"].items()}
     r.skipped = out["skipped"]
 elif name and (d := saved_drafts(name)):
     r.drafts, source = d, "saved"
 
+trace = traceability(r.stories, r.drafts, r.gaps)
+n_criteria = sum(len(s.criteria) for s in r.stories)
+n_cases = sum(len(d.test_cases) for d in r.drafts.values())
+assumed = sum(t.coverage == "assumed" for t in trace)
+untested = sum(t.coverage == "NO" for t in trace)
+
+with intro:
+    st.markdown("**How to read this page in 30 seconds**")
+    a, b, c = st.columns(3)
+    with a.container(border=True):
+        st.markdown(f"**1. The input**  \n{'A sample' if name else 'Your'} spec: *{r.title}*, with {len(r.stories)} user "
+                    f"stories and {n_criteria} acceptance criteria.")
+    with b.container(border=True):
+        st.markdown(f"**2. What SpecCheck found**  \n**{len(r.gaps)} gaps** ({len(r.blocking)} blocking): requirements "
+                    "that are vague, undecided, or missing a GxP control such as an e-signature. Each comes with the "
+                    "question to send back to product.")
+    with c.container(border=True):
+        if r.drafts:
+            st.markdown(f"**3. The catch**  \nAI drafted **{n_cases} test cases**, and {n_criteria - untested} of "
+                        f"{n_criteria} criteria have a test. But **{assumed} of those tests rest on assumptions** "
+                        "nobody decided (see *Traceability*, marked 'assumed').")
+        else:
+            st.markdown("**3. Test cases**  \nTurn on AI drafting to generate test cases and a traceability matrix "
+                        "that shows which tests rest on assumptions.")
+
 (st.error if r.blocking else st.success)(
     f"**{'NOT ready for development' if r.blocking else 'Ready for development'}**: {len(r.blocking)} blocking "
     f"gap(s), {len(r.gaps) - len(r.blocking)} other, across {len(r.stories)} stories.")
-trace = traceability(r.stories, r.drafts, r.gaps)
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Stories", len(r.stories))
-c2.metric("Acceptance criteria", sum(len(s.criteria) for s in r.stories))
+c2.metric("Acceptance criteria", n_criteria)
 c3.metric("Requirement gaps", len(r.gaps))
-c4.metric("Draft test cases", sum(len(d.test_cases) for d in r.drafts.values()) if r.drafts else "-")
+c4.metric("Draft test cases", n_cases if r.drafts else "-")
 if source == "saved":
     st.caption("Test cases for this sample were drafted earlier with Gemini and saved. They stay 'draft' until a "
                "person reviews them.")
@@ -115,7 +135,7 @@ with tab_gaps:
 
 with tab_cases:
     if not r.drafts:
-        st.info("Turn on AI drafting in the sidebar, or pick a sample to see saved drafts.")
+        st.info("Turn on 'Draft test cases with AI' above, or pick a sample to see saved drafts.")
     for s in r.stories:
         d = r.drafts.get(s.id, Drafted(test_cases=[]))
         with st.expander(f"{s.id} {s.title}: {len(d.test_cases)} case(s)"):
