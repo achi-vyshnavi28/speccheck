@@ -127,10 +127,12 @@ with tab_cases:
 with tab_trace:
     st.dataframe(pd.DataFrame([{"Story": t.story, "AC": t.number, "Acceptance criterion": t.criterion,
                                 "Test cases": ", ".join(t.cases) or "-", "Open gaps": ", ".join(t.gaps) or "-",
-                                "Covered": "yes" if t.cases else "NO"} for t in trace]),
+                                "Covered": t.coverage} for t in trace]),
                  hide_index=True, use_container_width=True)
     if r.drafts:
-        st.caption(f"{sum(not t.cases for t in trace)} of {len(trace)} criteria have no test case.")
+        st.caption(f"{sum(not t.cases for t in trace)} of {len(trace)} criteria have no test case. "
+                   f"{sum(t.coverage == 'assumed' for t in trace)} more are tested, but on an assumption: the criterion "
+                   "has an open gap, so the expected result was guessed until product answers.")
 
 with tab_export:
     version = st.text_input("Version", "1.0")

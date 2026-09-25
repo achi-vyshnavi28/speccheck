@@ -87,6 +87,11 @@ def test_traceability_flags_criteria_without_tests():
     trace = traceability(stories, drafts, lint(stories))
     us101 = [t for t in trace if t.story == "US-101"]
     assert us101[0].cases == ["TC-101-01"] and us101[1].cases == ["TC-101-02"] and us101[2].cases == []
+    assert [t.coverage for t in us101] == ["yes", "yes", "NO"]
+    us103 = [t for t in trace if t.story == "US-103"]
+    assert us103[2].coverage == "NO"                      # vague criterion, no test drafted
+    us104 = [t for t in trace if t.story == "US-104"][0]  # "QA can override as needed." has open gaps
+    assert us104.cases and us104.coverage == "assumed"
 
 
 def test_excel_library_versions_and_sheets(tmp_path):

@@ -18,6 +18,7 @@ from speccheck.parse import Story
 
 HEAD = PatternFill("solid", fgColor="D9E1F2")
 MISSING = PatternFill("solid", fgColor="FCE4E4")
+ASSUMED = PatternFill("solid", fgColor="FFF4E0")
 
 
 def case_id(story: Story, n: int) -> str:
@@ -31,6 +32,11 @@ class Trace:
     criterion: str
     cases: list[str]
     gaps: list[str]
+
+    @property
+    def coverage(self) -> str:
+        """NO: no test. assumed: tested, but the criterion has an open gap, so the expected result was assumed."""
+        return "NO" if not self.cases else "assumed" if self.gaps else "yes"
 
 
 def traceability(stories: list[Story], drafts: dict[str, Drafted], gaps: list[Gap]) -> list[Trace]:
@@ -76,12 +82,12 @@ def excel_library(path, version: str, prd_title: str, stories: list[Story], draf
            cases, [11, 8, 8, 40, 11, 9, 30, 55, 45, 9, 9, 18, 30])
     trace = traceability(stories, drafts, gaps)
     ws = _sheet(wb, "Traceability", ["Story", "AC #", "Acceptance criterion", "Test cases", "Open gaps", "Covered"],
-                [[t.story, t.number, t.criterion, ", ".join(t.cases), ", ".join(t.gaps), "yes" if t.cases else "NO"]
+                [[t.story, t.number, t.criterion, ", ".join(t.cases), ", ".join(t.gaps), t.coverage]
                  for t in trace], [8, 6, 60, 30, 30, 9])
     for row in ws.iter_rows(min_row=2):
-        if row[5].value == "NO":
+        if row[5].value in ("NO", "assumed"):
             for cell in row:
-                cell.fill = MISSING
+                cell.fill = MISSING if row[5].value == "NO" else ASSUMED
     gap_rows = [[f"GAP-{i:02d}", g.story, g.severity, g.rule, g.text, g.why, g.question, "open"]
                 for i, g in enumerate(gaps, start=1)]
     gap_rows += [[f"GAP-L{i:02d}", sid, "medium", "llm_ambiguity", a, "Drafting could not state an exact expected result.",
@@ -94,7 +100,8 @@ def excel_library(path, version: str, prd_title: str, stories: list[Story], draf
         history = [list(r) for r in load_workbook(previous)["Change log"].iter_rows(min_row=2, values_only=True)]
     history.append([version, date.today().isoformat(), prd_title,
                     f"{len(cases)} test cases drafted, {len(gap_rows)} requirement gaps raised, "
-                    f"{sum(not t.cases for t in trace)} criteria without a test case"])
+                    f"{sum(not t.cases for t in trace)} criteria without a test case, "
+                    f"{sum(t.coverage == 'assumed' for t in trace)} tested on an assumption"])
     _sheet(wb, "Change log", ["Version", "Date", "Source", "Change"], history, [9, 12, 45, 70])
     wb.move_sheet("Change log", offset=-3)
     if isinstance(path, (str, Path)):

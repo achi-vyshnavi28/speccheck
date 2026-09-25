@@ -49,9 +49,9 @@ given (they missed "accurate", "effective", "without delay"). The LLM catches al
 So SpecCheck uses rules as the gate (same PRD → same result, which matters in a validated process) and the LLM as a
 second reviewer whose output is always marked *draft* for a person to confirm.
 
-**Cross-check from the samples.** On the three sample PRDs, the only acceptance criteria the LLM would not write a
-test case for were exactly the ones the rules flagged as vague ("quickly and user-friendly", "handled
-appropriately", "should be fast", "TBD"). Two independent methods agreeing on the same untestable lines.
+**Cross-check from the samples.** On the three sample PRDs, every acceptance criterion the LLM would not write a
+test case for had also been flagged by the rules ("quickly and user-friendly", "handled appropriately", "should be
+fast", "TBD"). Two independent methods agreeing on the same untestable lines.
 
 ## Questions answered with SQL
 The labels and every system's predictions are loaded into SQLite (`python -m evals.to_sqlite` → `evals/eval.sqlite`)
@@ -66,11 +66,16 @@ and questioned in [`evals/questions.sql`](evals/questions.sql) (CTEs, window fun
 | How much did the rules overfit? (Q5) | Vague-term recall fell from 100% (development) to 45% (held-out); placeholder, weak modal, missing value and pronoun rules held at 100% |
 
 ## Samples and outputs
-| PRD | Stories | Gaps (blocking) | Draft test cases | Outputs |
-|---|---|---|---|---|
-| `PRD-1.1_cleaning_log_and_rejection` (from [BatchGuard](https://github.com/achi-vyshnavi28/batchguard)) | 5 | 9 (3) | 23 | `outputs/PRD-1.1_…/` |
-| `PRD-2.0_capa_management` | 6 | 9 (2) | 27 | `outputs/PRD-2.0_…/` |
-| `PRD-3.0_training_records` | 5 | 8 (1) | 23 | `outputs/PRD-3.0_…/` |
+| PRD | Stories | Gaps (blocking) | Draft test cases | Criteria untested | Tested on an assumption |
+|---|---|---|---|---|---|
+| `PRD-1.1_cleaning_log_and_rejection` (from [BatchGuard](https://github.com/achi-vyshnavi28/batchguard)) | 5 | 9 (3) | 23 | 1 of 10 | 2 |
+| `PRD-2.0_capa_management` | 6 | 9 (2) | 27 | 1 of 15 | 5 |
+| `PRD-3.0_training_records` | 5 | 8 (1) | 23 | 2 of 14 | 2 |
+
+**"Tested on an assumption"** is a coverage state a plain percentage hides: the criterion has a test case, but also
+an open gap (e.g. "Due dates must be reasonable"), so the test's expected result was assumed until product answers.
+The traceability matrix marks these amber ("assumed") next to red ("NO", no test).
+Outputs per PRD are in `outputs/<prd>/`; `python -m evals.rebuild_outputs` regenerates them from the saved drafts.
 
 ## Project layout
 ```
