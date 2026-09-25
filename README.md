@@ -77,6 +77,11 @@ an open gap (e.g. "Due dates must be reasonable"), so the test's expected result
 The traceability matrix marks these amber ("assumed") next to red ("NO", no test).
 Outputs per PRD are in `outputs/<prd>/`; `python -m evals.rebuild_outputs` regenerates them from the saved drafts.
 
+## Design
+[Wireframes in Figma](https://www.figma.com/design/r25fpOdui1TT7TynBe7snc/Wireframes--BatchGuard--RootCause--SpecCheck?node-id=7-3), generated from `design/make_wireframes.py`: the traceability view as built,
+plus two proposals: **gap triage** (accept → Jira task, reject with a reason; every decision becomes a new independent
+label, which addresses the biggest limitation below) and an **evaluation dashboard** built from the SQL answers.
+
 ## Project layout
 ```
 speccheck/parse.py      Markdown PRD → stories and acceptance criteria (any ABC-123 story id)
