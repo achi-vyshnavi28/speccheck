@@ -1,0 +1,67 @@
+Summary,Issue Type,Description,Priority,Labels
+LB-401 Record equipment usage,Story,"As an operator, I want to record when I start and finish using a piece of equipment, so the logbook shows who used it, for which batch.
+
+Acceptance criteria:
+* The operator scans the equipment tag and selects the product and batch.
+* Start and end time are recorded.
+* Recording should be quick on the shop floor.",Medium,PRD-4.0
+LB-402 Record cleaning,Story,"As an operator, I want to record the cleaning I performed, so QA can see the equipment was cleaned to procedure.
+
+Acceptance criteria:
+* The operator selects the cleaning type (minor or major) and the cleaning SOP.
+* Cleaning is verified.
+* The entry is signed.",Medium,PRD-4.0
+LB-403 Show equipment status,Story,"As a supervisor, I want to see the status of every piece of equipment, so I don't start a batch on dirty equipment.
+
+Acceptance criteria:
+* Each item shows one of: in use, dirty, clean, clean hold expired.
+* Clean hold time is TBD per equipment.
+* The system prevents use of equipment that isn't clean.",Medium,PRD-4.0
+LB-404 Correct a logbook entry,Story,"As a supervisor, I want to correct wrong entries.
+
+Acceptance criteria:
+* The supervisor can edit entries as needed.",Medium,PRD-4.0
+LB-405 Logbook review,Story,"As QA, I want to review logbooks, so issues are found before batch release.
+
+Acceptance criteria:
+* QA reviews logbooks periodically.
+* The review report can be exported.",Medium,PRD-4.0
+[Spec gap] LB-401 (no negative behaviour): Record equipment usage,Task,"Rule: no_negative_behaviour
+Why: No criterion says what happens when a rule is broken.
+Question: What does the system do on invalid input or a wrong role (message, block, audit entry)?",Medium,PRD-4.0 requirement-gap
+[Spec gap] LB-401 (weak modal): Recording should be quick on the shop floor.,Task,"Rule: weak_modal
+Why: 'should' makes it unclear whether this is mandatory.
+Question: Is this mandatory ('must') or optional?",Low,PRD-4.0 requirement-gap
+[Spec gap] LB-402 (no negative behaviour): Record cleaning,Task,"Rule: no_negative_behaviour
+Why: No criterion says what happens when a rule is broken.
+Question: What does the system do on invalid input or a wrong role (message, block, audit entry)?",Medium,PRD-4.0 requirement-gap
+[Spec gap] LB-402 (missing actor): Cleaning is verified.,Task,"Rule: missing_actor
+Why: A human action with no role: the record would not be attributable (ALCOA+ 'Attributable').
+Question: Which role performs this, and can the same person do the previous step?",Medium,PRD-4.0 requirement-gap
+[Spec gap] LB-402 (missing actor): The entry is signed.,Task,"Rule: missing_actor
+Why: A human action with no role: the record would not be attributable (ALCOA+ 'Attributable').
+Question: Which role performs this, and can the same person do the previous step?",Medium,PRD-4.0 requirement-gap
+[Spec gap] LB-403 (no negative behaviour): Show equipment status,Task,"Rule: no_negative_behaviour
+Why: No criterion says what happens when a rule is broken.
+Question: What does the system do on invalid input or a wrong role (message, block, audit entry)?",Medium,PRD-4.0 requirement-gap
+"[Spec gap] LB-403 (missing value): Each item shows one of: in use, dirty, clean, clean hold expired.",Task,"Rule: missing_value
+Why: 'expired' implies a limit, but no value is given.
+Question: What is the exact value and unit?",Medium,PRD-4.0 requirement-gap
+[Spec gap] LB-403 (placeholder): Clean hold time is TBD per equipment.,Task,"Rule: placeholder
+Why: Requirement is not decided yet.
+Question: Please decide and specify before development starts.",High,PRD-4.0 requirement-gap
+[Spec gap] LB-404 (thin acceptance criteria): Correct a logbook entry,Task,"Rule: thin_acceptance_criteria
+Why: Only 1 acceptance criterion; negative and boundary behaviour are undefined.
+Question: What should happen on invalid input, wrong role, and at the limits?",Medium,PRD-4.0 requirement-gap
+[Spec gap] LB-404 (vague term): The supervisor can edit entries as needed.,Task,"Rule: vague_term
+Why: 'as needed' has no pass/fail criterion.
+Question: Under which exact conditions, and who decides?",High,PRD-4.0 requirement-gap
+[Spec gap] LB-404 (gxp control missing): The supervisor can edit entries as needed.,Task,"Rule: gxp_control_missing
+Why: A GMP-relevant action (override/delete/change/reject) without a required reason, e-signature or audit-trail entry (21 CFR 11.10(e), 11.50).
+Question: Must this action require a reason, an e-signature and an audit-trail entry? Who may perform it?",High,PRD-4.0 requirement-gap
+[Spec gap] LB-405 (no negative behaviour): Logbook review,Task,"Rule: no_negative_behaviour
+Why: No criterion says what happens when a rule is broken.
+Question: What does the system do on invalid input or a wrong role (message, block, audit entry)?",Medium,PRD-4.0 requirement-gap
+[Spec gap] LB-405 (vague term): QA reviews logbooks periodically.,Task,"Rule: vague_term
+Why: 'periodically' has no pass/fail criterion.
+Question: How often exactly?",Medium,PRD-4.0 requirement-gap

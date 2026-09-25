@@ -1,0 +1,406 @@
+{
+ "LB-401": {
+  "test_cases": [
+   {
+    "title": "Successful Equipment Usage Recording (Happy Path)",
+    "type": "positive",
+    "covers": [
+     1,
+     2,
+     3
+    ],
+    "preconditions": "Operator is logged in with valid credentials. Equipment is in 'Available' status. A valid product and active batch are configured in the system.",
+    "steps": [
+     "Scan the equipment barcode tag using the shop floor scanner.",
+     "Select the appropriate product and active batch from the dropdown list.",
+     "Click 'Start Usage' and verify the start timestamp is captured.",
+     "Perform the process, then click 'Finish Usage' to stop the timer."
+    ],
+    "expected": "The system successfully captures the equipment ID, operator ID, selected product, active batch, and exact start/end timestamps. The entire interaction completes within 3 taps/scans.",
+    "priority": "high"
+   },
+   {
+    "title": "Prevent Usage Recording for Inactive or Invalid Batch",
+    "type": "negative",
+    "covers": [
+     1
+    ],
+    "preconditions": "Operator is logged in. Equipment tag is scanned.",
+    "steps": [
+     "Scan the equipment tag.",
+     "Select a product and choose a batch that is closed, cancelled, or non-existent.",
+     "Attempt to click 'Start Usage'."
+    ],
+    "expected": "The system blocks the action and displays an error message: 'Selected batch is not valid or active for usage recording.' No start time is recorded.",
+    "priority": "high"
+   },
+   {
+    "title": "Future End Time Boundary Prevention",
+    "type": "boundary",
+    "covers": [
+     2
+    ],
+    "preconditions": "Equipment usage is currently active with a valid start time recorded.",
+    "steps": [
+     "Attempt to manually edit the end time field to a future timestamp relative to the server clock.",
+     "Click 'Save' or 'Finish Usage'."
+    ],
+    "expected": "The system rejects the manual entry or overrides it with the actual current system timestamp, displaying a warning: 'End time cannot be set in the future.'",
+    "priority": "medium"
+   },
+   {
+    "title": "Access Denied for Unauthorized Role",
+    "type": "permission",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with a role lacking equipment operation privileges (e.g., 'Viewer' or 'Guest').",
+    "steps": [
+     "Scan the equipment tag.",
+     "Attempt to select product/batch and initiate usage."
+    ],
+    "expected": "The system denies access, displays an unauthorized action message, and prevents any logbook entry creation.",
+    "priority": "high"
+   },
+   {
+    "title": "Audit Trail and Electronic Signature Generation on End Usage",
+    "type": "audit",
+    "covers": [
+     2
+    ],
+    "preconditions": "Operator has active equipment usage running and clicks 'Finish Usage'.",
+    "steps": [
+     "Click 'Finish Usage'.",
+     "Provide required electronic signature credentials (username and password) and meaning of signature when prompted.",
+     "Navigate to the system Audit Trail."
+    ],
+    "expected": "An immutable audit trail record is generated containing the old state, new state, exact timestamps, operator user ID, electronic signature meaning, and timestamp of the signature, fully compliant with 21 CFR Part 11.",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criterion 3 ('Recording should be quick on the shop floor') is subjective and lacks a specific quantitative threshold (e.g., maximum allowable seconds or maximum number of interactions/clicks)."
+  ]
+ },
+ "LB-402": {
+  "test_cases": [
+   {
+    "title": "Successful Recording of Major Cleaning with Signature",
+    "type": "positive",
+    "covers": [
+     1,
+     2,
+     3
+    ],
+    "preconditions": "User is logged in with the Operator role. Equipment is in a status ready for cleaning.",
+    "steps": [
+     "Navigate to the equipment cleaning record screen.",
+     "Select cleaning type as 'Major'.",
+     "Select an active cleaning SOP from the dropdown.",
+     "Enter verification details.",
+     "Submit the entry with electronic signature (User ID, password, and meaningful meaning of signature)."
+    ],
+    "expected": "The cleaning record is successfully saved, status updates to indicate cleaning is complete and verified, and an audit trail entry is generated capturing the operator ID, timestamp, and signature meaning.",
+    "priority": "high"
+   },
+   {
+    "title": "Unauthorized User Attempts to Record Cleaning",
+    "type": "permission",
+    "covers": [
+     1,
+     3
+    ],
+    "preconditions": "User is logged in with a role that lacks cleaning record privileges (e.g., Viewer or untrained personnel).",
+    "steps": [
+     "Navigate to the equipment cleaning record screen.",
+     "Attempt to select cleaning type and SOP."
+    ],
+    "expected": "The system prevents the user from creating or saving a cleaning record, and access is denied with an appropriate error message.",
+    "priority": "high"
+   },
+   {
+    "title": "Submission Fails When Mandatory Cleaning Type and SOP Are Missing",
+    "type": "negative",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with the Operator role on the cleaning record screen.",
+    "steps": [
+     "Leave cleaning type and cleaning SOP unselected.",
+     "Attempt to proceed to verification or sign the entry."
+    ],
+    "expected": "The system displays validation errors indicating that both the cleaning type and cleaning SOP are mandatory fields, and prevents saving.",
+    "priority": "medium"
+   },
+   {
+    "title": "Electronic Signature Audit Trail Verification",
+    "type": "audit",
+    "covers": [
+     3
+    ],
+    "preconditions": "A cleaning record has been successfully created and signed by an operator.",
+    "steps": [
+     "Log in as a QA Auditor or Administrator.",
+     "Navigate to the system audit trail for the specific equipment cleaning record."
+    ],
+    "expected": "The audit trail permanently records the electronic signature, including the printed name of the signer, timestamp (UTC), the meaning of the signature, and the associated action without allowing modification or deletion.",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criterion 2 ('Cleaning is verified') does not specify who performs the verification (e.g., peer review vs. second-person QA verification) or what specific data fields constitute valid verification.",
+   "Acceptance criterion 3 ('The entry is signed') does not specify whether a dual-signature (Operator and Verifier/QA) is required for compliance."
+  ]
+ },
+ "LB-403": {
+  "test_cases": [
+   {
+    "title": "Verify Equipment Status Display",
+    "type": "positive",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in as a Supervisor. Equipment inventory contains items in various states.",
+    "steps": [
+     "Navigate to the Equipment Status dashboard."
+    ],
+    "expected": "Each equipment item displays one of the exact statuses: 'in use', 'dirty', 'clean', or 'clean hold expired'.",
+    "priority": "high"
+   },
+   {
+    "title": "Prevent Batch Start on Dirty Equipment",
+    "type": "negative",
+    "covers": [
+     3
+    ],
+    "preconditions": "User is logged in as a Supervisor. Selected equipment status is 'dirty'.",
+    "steps": [
+     "Attempt to initiate a new batch using the dirty equipment.",
+     "Observe the system response."
+    ],
+    "expected": "The system blocks the action, displays an error message indicating the equipment is not clean, and prevents batch initiation.",
+    "priority": "high"
+   },
+   {
+    "title": "Clean Hold Time Expiration Boundary",
+    "type": "boundary",
+    "covers": [
+     1,
+     2,
+     3
+    ],
+    "preconditions": "Equipment has been cleaned and the specific clean hold time limit has been reached.",
+    "steps": [
+     "View the equipment status on the dashboard.",
+     "Attempt to start a batch using this equipment."
+    ],
+    "expected": "Status automatically updates to 'clean hold expired', and the system prevents the start of the batch.",
+    "priority": "high"
+   },
+   {
+    "title": "Unauthorized Role Attempt to Override Equipment Status",
+    "type": "permission",
+    "covers": [
+     3
+    ],
+    "preconditions": "User is logged in with an Operator role (non-supervisor). Equipment status is 'dirty'.",
+    "steps": [
+     "Attempt to bypass the status restriction to start a batch on dirty equipment."
+    ],
+    "expected": "System denies access, restricts the action based on role permissions, and generates a security violation log entry.",
+    "priority": "high"
+   },
+   {
+    "title": "Audit Trail and Electronic Signature for Status Override or Batch Action",
+    "type": "audit",
+    "covers": [
+     3
+    ],
+    "preconditions": "User performs a critical action related to equipment status or batch initiation.",
+    "steps": [
+     "Execute the action.",
+     "Check the 21 CFR Part 11 compliant audit trail."
+    ],
+    "expected": "An audit trail record is generated capturing the user ID, timestamp, reason for action, old value, and new value, tied to an electronic signature.",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": [
+   "Clean hold time is TBD per equipment, meaning exact duration thresholds cannot be hardcoded into a universal test script without specific configuration parameters for each equipment ID."
+  ]
+ },
+ "LB-404": {
+  "test_cases": [
+   {
+    "title": "Supervisor successfully edits a logbook entry",
+    "type": "positive",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with the Supervisor role. A logbook entry exists.",
+    "steps": [
+     "Navigate to the logbook module.",
+     "Select an existing logbook entry and click 'Edit'.",
+     "Modify the text in the entry field.",
+     "Click 'Save'."
+    ],
+    "expected": "The logbook entry is updated with the new text, and the changes are successfully committed to the database.",
+    "priority": "high"
+   },
+   {
+    "title": "Operator attempts to edit a logbook entry",
+    "type": "permission",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with the Operator role. A logbook entry exists.",
+    "steps": [
+     "Navigate to the logbook module.",
+     "Attempt to locate the 'Edit' button on an existing logbook entry."
+    ],
+    "expected": "The 'Edit' button is either absent or disabled, and editing is prevented due to insufficient privileges.",
+    "priority": "high"
+   },
+   {
+    "title": "Edit logbook entry generates mandatory audit trail and electronic signature prompt",
+    "type": "audit",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with the Supervisor role. A logbook entry exists.",
+    "steps": [
+     "Navigate to the logbook module and edit an existing logbook entry.",
+     "Click 'Save'.",
+     "Provide electronic signature credentials (username, password, and meaning of signature)."
+    ],
+    "expected": "An e-signature dialog appears upon saving, and the audit trail captures the old value, new value, timestamp, user ID, and reason for change.",
+    "priority": "high"
+   },
+   {
+    "title": "Attempt to save an edited logbook entry without entering a reason for change",
+    "type": "negative",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with the Supervisor role. A logbook entry is in edit mode.",
+    "steps": [
+     "Modify the logbook entry text.",
+     "Click 'Save' without providing a mandatory reason for the correction in the prompt."
+    ],
+    "expected": "The system blocks the save action and displays a validation error message requiring a reason for change.",
+    "priority": "medium"
+   },
+   {
+    "title": "Attempt to edit a logbook entry beyond the allowed time window",
+    "type": "boundary",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with the Supervisor role. A logbook entry was created 30 days ago (exceeding the system's 24-hour correction policy limit).",
+    "steps": [
+     "Navigate to the logbook module.",
+     "Select the logbook entry older than 24 hours and attempt to click 'Edit'."
+    ],
+    "expected": "The 'Edit' option is disabled, and a tooltip indicates that the time window for corrections has expired.",
+    "priority": "medium"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criterion 1 does not specify the exact time window limit (e.g., 24 hours) for when entries can be edited, nor does it specify the mandatory fields required for the audit trail reason for change."
+  ]
+ },
+ "LB-405": {
+  "test_cases": [
+   {
+    "title": "Successful Periodic Logbook Review by QA",
+    "type": "positive",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with the QA role. Logbook entries exist for the review period.",
+    "steps": [
+     "Navigate to the Logbook Review module.",
+     "Select the target review period.",
+     "Mark the logbook review as complete."
+    ],
+    "expected": "The system records the review status as completed, logs the reviewer ID and timestamp, and presents the reviewed logbook in a locked state.",
+    "priority": "high"
+   },
+   {
+    "title": "Export Logbook Review Report",
+    "type": "positive",
+    "covers": [
+     2
+    ],
+    "preconditions": "User is logged in with the QA role. A logbook review has been completed.",
+    "steps": [
+     "Open the completed logbook review.",
+     "Click the 'Export Report' button.",
+     "Select PDF format and confirm."
+    ],
+    "expected": "The system generates and downloads a review report containing all reviewed entries, reviewer credentials, and review timestamps without data truncation.",
+    "priority": "high"
+   },
+   {
+    "title": "Unauthorized User Attempts Logbook Review",
+    "type": "permission",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with an Operator role (non-QA).",
+    "steps": [
+     "Navigate to the Logbook Review module.",
+     "Attempt to perform and save a logbook review."
+    ],
+    "expected": "The system denies access to the review action, displays an 'Access Denied' error message, and generates an unauthorized access security audit event.",
+    "priority": "high"
+   },
+   {
+    "title": "Review Report Export Fails When No Review Exists",
+    "type": "negative",
+    "covers": [
+     2
+    ],
+    "preconditions": "User is logged in with the QA role. No logbook review has been performed for the selected period.",
+    "steps": [
+     "Navigate to the unreviewed logbook period.",
+     "Attempt to click the 'Export Report' button."
+    ],
+    "expected": "The 'Export Report' button is disabled, or the system displays an error stating 'No review report available for export'.",
+    "priority": "medium"
+   },
+   {
+    "title": "Boundary Test: Review Period Time Window Validation",
+    "type": "boundary",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with the QA role.",
+    "steps": [
+     "Attempt to submit a logbook review covering a future end date beyond the current system timestamp."
+    ],
+    "expected": "The system rejects the date range, displays a validation error stating review end date cannot be in the future, and prevents saving.",
+    "priority": "medium"
+   },
+   {
+    "title": "Audit Trail and Electronic Signature Verification for Review",
+    "type": "audit",
+    "covers": [
+     1,
+     2
+    ],
+    "preconditions": "User is logged in with the QA role.",
+    "steps": [
+     "Complete a logbook review.",
+     "Provide username and password for e-signature prompt.",
+     "Check the system Audit Trail for the event."
+    ],
+    "expected": "An immutable audit trail record is generated capturing the User ID, exact timestamp, Meaning of Signature (e.g., 'Logbook Review Approval'), and the old vs. new review status in compliance with 21 CFR Part 11.",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criterion 1 specifies 'periodically' but does not define the exact frequency (e.g., daily, weekly, monthly) or time window allowed for reviews."
+  ]
+ }
+}

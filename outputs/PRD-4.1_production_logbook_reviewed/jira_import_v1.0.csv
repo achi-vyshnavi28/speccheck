@@ -1,0 +1,45 @@
+Summary,Issue Type,Description,Priority,Labels
+LB-401 Record equipment usage,Story,"As an operator, I want to record when I start and finish using a piece of equipment, so the logbook shows who used it, for which batch.
+
+Acceptance criteria:
+* The operator scans the equipment tag and selects the product and batch; the start time is the server time of the scan.
+* Only an operator trained on the equipment's SOP can start usage; others are refused with a message naming the missing training.
+* Starting usage is refused if the equipment status is not ""clean"", with a message showing the current status.
+* The end time is the server time when the operator ends usage; an end time before the start time is impossible because both come from the server.
+* A usage entry takes no more than 3 taps after scanning the tag.",Medium,PRD-4.1
+LB-402 Record cleaning,Story,"As an operator, I want to record the cleaning I performed, so QA can see the equipment was cleaned to procedure.
+
+Acceptance criteria:
+* The operator selects the cleaning type (minor or major) and the cleaning SOP, and signs with an e-signature (meaning: ""Performed"").
+* A supervisor verifies a major cleaning with an e-signature (meaning: ""Verified""); the supervisor cannot be the operator who performed it.
+* Until a major cleaning is verified, the equipment status stays ""dirty"".
+* A cleaning entry without the SOP is refused with a message naming the missing field.",Medium,PRD-4.1
+LB-403 Show equipment status,Story,"As a supervisor, I want to see the status of every piece of equipment, so I don't start a batch on dirty equipment.
+
+Acceptance criteria:
+* Each item shows one of: in use, dirty, clean, clean hold expired.
+* The clean hold time is configured per equipment by QA; the default is 72 hours from the end of the cleaning.
+* When the hold time passes, the status changes to ""clean hold expired"" and starting usage is refused.",Medium,PRD-4.1
+LB-404 Correct a logbook entry,Story,"As a supervisor, I want to correct a wrong entry, so the logbook is accurate without losing the original record.
+
+Acceptance criteria:
+* Only a supervisor or QA can correct an entry; an operator's attempt is refused.
+* A correction requires a reason of at least 10 characters and an e-signature (meaning: ""Corrected"").
+* The original value stays visible next to the corrected one, and the audit trail records user, time, old value, new value and reason.
+* An entry linked to a released batch cannot be corrected; the attempt is refused and QA is notified by email within 15 minutes.",Medium,PRD-4.1
+LB-405 Logbook review,Story,"As QA, I want to review logbooks, so issues are found before batch release.
+
+Acceptance criteria:
+* A logbook review is required for every batch before release; release is blocked until the review is signed by QA.
+* The review lists every entry for the equipment used by the batch, with corrections highlighted.
+* The review report can be exported as PDF, including the signature manifest.
+* A QA reviewer cannot review a batch in which they recorded a logbook entry.",Medium,PRD-4.1
+"[Spec gap] LB-402 (missing actor): Until a major cleaning is verified, the equipment status stays ""dirty""",Task,"Rule: missing_actor
+Why: A human action with no role: the record would not be attributable (ALCOA+ 'Attributable').
+Question: Which role performs this, and can the same person do the previous step?",Medium,PRD-4.1 requirement-gap
+"[Spec gap] LB-403 (missing value): Each item shows one of: in use, dirty, clean, clean hold expired.",Task,"Rule: missing_value
+Why: 'expired' implies a limit, but no value is given.
+Question: What is the exact value and unit?",Medium,PRD-4.1 requirement-gap
+"[Spec gap] LB-403 (missing value): When the hold time passes, the status changes to ""clean hold expired"" ",Task,"Rule: missing_value
+Why: 'expired' implies a limit, but no value is given.
+Question: What is the exact value and unit?",Medium,PRD-4.1 requirement-gap

@@ -1,0 +1,360 @@
+{
+ "LB-401": {
+  "test_cases": [
+   {
+    "title": "Successful Equipment Usage Start and End",
+    "type": "positive",
+    "covers": [
+     1,
+     4
+    ],
+    "preconditions": "Operator is logged in, trained on the equipment SOP, and equipment status is \"clean\".",
+    "steps": [
+     "Scan the equipment tag.",
+     "Select the product and batch.",
+     "Tap start usage.",
+     "Tap end usage when finished."
+    ],
+    "expected": "Start time is recorded as the exact server timestamp at the moment of the scan. End time is recorded as the exact server timestamp when ending usage, and end time is strictly greater than or equal to start time.",
+    "priority": "high"
+   },
+   {
+    "title": "Start Usage Refused Due to Missing SOP Training",
+    "type": "permission",
+    "covers": [
+     2
+    ],
+    "preconditions": "Operator is logged in but lacks valid training for the equipment SOP.",
+    "steps": [
+     "Scan the equipment tag.",
+     "Select the product and batch.",
+     "Attempt to start usage."
+    ],
+    "expected": "System refuses the action and displays an error message explicitly naming the missing SOP training.",
+    "priority": "high"
+   },
+   {
+    "title": "Start Usage Refused When Equipment Status Is Not Clean",
+    "type": "negative",
+    "covers": [
+     3
+    ],
+    "preconditions": "Operator is logged in and trained on the SOP. Equipment current status is \"in use\" or \"dirty\".",
+    "steps": [
+     "Scan the equipment tag.",
+     "Select the product and batch.",
+     "Attempt to start usage."
+    ],
+    "expected": "System refuses the action and displays an error message showing the current equipment status (e.g., \"dirty\").",
+    "priority": "high"
+   },
+   {
+    "title": "Audit Trail and Electronic Signature Capture",
+    "type": "audit",
+    "covers": [
+     1,
+     4
+    ],
+    "preconditions": "Operator completes a full equipment usage cycle (start and end).",
+    "steps": [
+     "Navigate to the system audit trail / electronic batch record.",
+     "Inspect the log entry corresponding to the equipment usage session."
+    ],
+    "expected": "The audit trail permanently records the operator ID, server timestamps for start and end, equipment ID, product, batch number, and reason for action compliant with 21 CFR Part 11.",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criterion 5 specifies 'no more than 3 taps after scanning the tag', but does not define what constitutes a 'tap' in the context of specific UI controls (e.g., dropdown selections vs. confirmation buttons), making an exact tap-count verification ambiguous without wireframes."
+  ]
+ },
+ "LB-402": {
+  "test_cases": [
+   {
+    "title": "Operator records minor cleaning with e-signature",
+    "type": "positive",
+    "covers": [
+     1
+    ],
+    "preconditions": "Logged in as an Operator. Equipment status is dirty.",
+    "steps": [
+     "Navigate to Equipment Cleaning screen.",
+     "Select cleaning type 'minor'.",
+     "Select a valid cleaning SOP.",
+     "Provide e-signature representing 'Performed'."
+    ],
+    "expected": "The cleaning record is successfully saved, the e-signature captures the 'Performed' meaning along with user ID and timestamp, and equipment status updates accordingly.",
+    "priority": "high"
+   },
+   {
+    "title": "Supervisor verification of major cleaning",
+    "type": "positive",
+    "covers": [
+     1,
+     2,
+     3
+    ],
+    "preconditions": "Operator has recorded a major cleaning with an e-signature. Equipment status is 'dirty'. Logged in as Supervisor A (different from the operator).",
+    "steps": [
+     "Navigate to unverified major cleaning records.",
+     "Review the cleaning details.",
+     "Provide supervisor e-signature representing 'Verified'."
+    ],
+    "expected": "The cleaning record status updates to 'Verified', and the equipment status changes from 'dirty' to 'clean' (or equivalent ready status).",
+    "priority": "high"
+   },
+   {
+    "title": "Cleaning entry without SOP is refused",
+    "type": "negative",
+    "covers": [
+     4
+    ],
+    "preconditions": "Logged in as an Operator.",
+    "steps": [
+     "Navigate to Equipment Cleaning screen.",
+     "Select cleaning type 'minor' or 'major'.",
+     "Leave the SOP field blank.",
+     "Attempt to submit and sign the cleaning record."
+    ],
+    "expected": "The system refuses the entry and displays an error message explicitly naming the missing field ('SOP').",
+    "priority": "high"
+   },
+   {
+    "title": "Operator cannot verify their own major cleaning",
+    "type": "permission",
+    "covers": [
+     2
+    ],
+    "preconditions": "Operator X has recorded a major cleaning with an e-signature. Logged in as Operator X.",
+    "steps": [
+     "Navigate to the major cleaning record pending verification.",
+     "Attempt to sign with the supervisor e-signature meaning 'Verified'."
+    ],
+    "expected": "The system denies the verification action and displays an error message stating that the operator who performed the cleaning cannot verify it.",
+    "priority": "high"
+   },
+   {
+    "title": "Equipment status remains dirty prior to supervisor verification",
+    "type": "boundary",
+    "covers": [
+     3
+    ],
+    "preconditions": "Operator has successfully submitted and signed a major cleaning record.",
+    "steps": [
+     "Check the equipment status in the system immediately after major cleaning submission before any supervisor verification occurs."
+    ],
+    "expected": "The equipment status remains strictly 'dirty'.",
+    "priority": "medium"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criteria do not specify what the exact target equipment status changes to after a major cleaning is verified, other than stating it is no longer 'dirty'.",
+   "Acceptance criteria do not define the exact error message text required when the SOP field is missing, only that it must name the missing field."
+  ]
+ },
+ "LB-403": {
+  "test_cases": [
+   {
+    "title": "Verify Equipment Status Display for All Valid States",
+    "type": "positive",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with Supervisor role. Equipment inventory contains items in 'in use', 'dirty', 'clean', and 'clean hold expired' states.",
+    "steps": [
+     "Navigate to the Equipment Status dashboard.",
+     "Inspect the status displayed for each piece of equipment."
+    ],
+    "expected": "Each equipment item clearly displays one of the four exact statuses: 'in use', 'dirty', 'clean', or 'clean hold expired'.",
+    "priority": "high"
+   },
+   {
+    "title": "Verify Refusal to Start Batch on Equipment with Expired Clean Hold",
+    "type": "negative",
+    "covers": [
+     3
+    ],
+    "preconditions": "User is logged in with Supervisor role. Selected equipment has status 'clean hold expired'.",
+    "steps": [
+     "Select the equipment with 'clean hold expired' status.",
+     "Attempt to initiate a new batch using this equipment."
+    ],
+    "expected": "System refuses the batch start, displays an error message stating that equipment clean hold has expired, and prevents batch creation.",
+    "priority": "high"
+   },
+   {
+    "title": "Boundary Test for Clean Hold Time Expiration at 72 Hours Default",
+    "type": "boundary",
+    "covers": [
+     2,
+     3
+    ],
+    "preconditions": "Equipment was cleaned and status set to 'clean' exactly 72 hours ago based on system time.",
+    "steps": [
+     "Advance system time by 1 minute (total 72 hours and 1 minute since cleaning).",
+     "Refresh the Equipment Status dashboard and attempt to start a batch on the equipment."
+    ],
+    "expected": "Status automatically changes to 'clean hold expired' and starting a batch is refused.",
+    "priority": "high"
+   },
+   {
+    "title": "Verify Supervisor Role Access versus Unauthorized Roles",
+    "type": "permission",
+    "covers": [],
+    "preconditions": "User is logged in with an Operator role (non-supervisor).",
+    "steps": [
+     "Navigate to the equipment status dashboard.",
+     "Attempt to initiate a batch on equipment marked as 'clean hold expired'."
+    ],
+    "expected": "System denies batch initiation due to insufficient privileges and equipment status rules.",
+    "priority": "medium"
+   },
+   {
+    "title": "Verify Audit Trail and Electronic Signature on Batch Start Refusal",
+    "type": "audit",
+    "covers": [
+     3
+    ],
+    "preconditions": "Supervisor attempts to start a batch on 'clean hold expired' equipment, triggering a refusal.",
+    "steps": [
+     "Navigate to the system Audit Trail.",
+     "Filter audit logs by the equipment ID and recent timestamp."
+    ],
+    "expected": "An audit trail record is generated capturing the attempted batch start, the refusal reason ('clean hold expired'), user ID, timestamp, and system state in compliance with 21 CFR Part 11.",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criterion 2 mentions QA configures clean hold time per equipment, but does not specify the UI workflow, validation limits (e.g., min/max hours) for QA configuration, or whether changing it retroactively affects currently clean equipment."
+  ]
+ },
+ "LB-404": {
+  "test_cases": [
+   {
+    "title": "Supervisor successfully corrects an unreleased logbook entry",
+    "type": "positive",
+    "covers": [
+     1,
+     2,
+     3
+    ],
+    "preconditions": "User is logged in as a Supervisor. A logbook entry exists for an unreleased batch.",
+    "steps": [
+     "Navigate to the logbook and select the incorrect entry.",
+     "Click 'Correct', enter a new value, and provide a valid reason of at least 10 characters ('Correction of transcription error').",
+     "Submit the e-signature with meaning 'Corrected'."
+    ],
+    "expected": "The correction is saved. The original value remains visible next to the new value. The audit trail records the user ID, timestamp, old value, new value, and reason.",
+    "priority": "high"
+   },
+   {
+    "title": "Operator is refused when attempting to correct an entry",
+    "type": "permission",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in as an Operator. A logbook entry exists.",
+    "steps": [
+     "Navigate to the logbook and select an entry.",
+     "Attempt to initiate a correction."
+    ],
+    "expected": "The system refuses the attempt with an access-denied error message, and no correction interface is opened.",
+    "priority": "high"
+   },
+   {
+    "title": "Correction refused when reason is under 10 characters",
+    "type": "negative",
+    "covers": [
+     2
+    ],
+    "preconditions": "User is logged in as a Supervisor. A logbook entry exists.",
+    "steps": [
+     "Select an entry and click 'Correct'.",
+     "Enter a new value and a reason with fewer than 10 characters ('Typo').",
+     "Attempt to submit."
+    ],
+    "expected": "The system displays a validation error requiring a reason of at least 10 characters, and the correction is not saved.",
+    "priority": "medium"
+   },
+   {
+    "title": "Correction refused for entry linked to a released batch with QA notification",
+    "type": "negative",
+    "covers": [
+     4
+    ],
+    "preconditions": "User is logged in as a Supervisor. A logbook entry is linked to a batch with 'Released' status.",
+    "steps": [
+     "Select the entry linked to the released batch and attempt to correct it.",
+     "Provide a valid reason and e-signature."
+    ],
+    "expected": "The correction attempt is refused by the system with a notification that the batch is released, and an email notification is dispatched to QA within 15 minutes.",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": [
+   "Criterion 4 specifies that QA is notified by email within 15 minutes, but does not define the exact email recipient address or mail server configuration details needed for automated test verification."
+  ]
+ },
+ "LB-405": {
+  "test_cases": [
+   {
+    "title": "Batch Release Blocked Without QA Review Signature",
+    "type": "negative",
+    "covers": [
+     1
+    ],
+    "preconditions": "Batch BATCH-001 is ready for release, but the associated logbook review has not been signed by QA.",
+    "steps": [
+     "Log in as QA Release Manager.",
+     "Navigate to Batch BATCH-001 release screen.",
+     "Attempt to click 'Approve Batch Release'."
+    ],
+    "expected": "The system blocks the release, displays an error message 'Batch release blocked: mandatory QA logbook review signature missing', and the batch status remains 'Pending Review'.",
+    "priority": "high"
+   },
+   {
+    "title": "Logbook Review List and Correction Highlighting",
+    "type": "positive",
+    "covers": [
+     2
+    ],
+    "preconditions": "Equipment EQ-100 has logbook entries for Batch BATCH-002, including at least one original entry and one corrected entry.",
+    "steps": [
+     "Log in as QA Reviewer.",
+     "Open the logbook review screen for Batch BATCH-002."
+    ],
+    "expected": "The review screen displays every logbook entry for EQ-100 associated with the batch timeframe, and any corrected entries are visually highlighted with distinct styling (e.g., strikethrough for original, highlighted new value, and audit reason visible).",
+    "priority": "high"
+   },
+   {
+    "title": "Export Review Report to PDF with Signature Manifest",
+    "type": "positive",
+    "covers": [
+     3
+    ],
+    "preconditions": "Logbook review for Batch BATCH-003 has been completed and signed by QA.",
+    "steps": [
+     "Open the completed logbook review for Batch BATCH-003.",
+     "Click 'Export as PDF'."
+    ],
+    "expected": "The system generates and downloads a PDF document containing all logbook review data, corrections, and a compliant electronic signature manifest including signer name, timestamp, and meaning of the signature (21 CFR Part 11 compliant).",
+    "priority": "medium"
+   },
+   {
+    "title": "Segregation of Duties - QA Cannot Review Own Logbook Entries",
+    "type": "permission",
+    "covers": [
+     4
+    ],
+    "preconditions": "QA user 'QA_John' recorded a logbook entry for Equipment EQ-200 used in Batch BATCH-004.",
+    "steps": [
+     "Log in as QA user 'QA_John'.",
+     "Navigate to the logbook review screen for Batch BATCH-004."
+    ],
+    "expected": "The system disables the review/sign functionality for 'QA_John' on Batch BATCH-004 and displays an informational message stating that reviewers cannot review batches for which they recorded logbook entries.",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": []
+ }
+}
