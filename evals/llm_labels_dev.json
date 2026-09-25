@@ -1,0 +1,337 @@
+{
+ "texts": [
+  "The operator records the dispensed weight of each raw material and confirms it with an e-signature.",
+  "Out-of-specification values are highlighted in red and raise a deviation automatically.",
+  "The system should warn the operator when a value is close to the limit.",
+  "Critical steps are verified before the batch continues.",
+  "A critical step must be verified by a second person who did not record it.",
+  "Entries must be recorded within the allowed time window after observation.",
+  "Entries must be recorded no later than 30 minutes after the observation time.",
+  "The supervisor can edit a recorded value.",
+  "A recorded value can be corrected only with a reason of at least 10 characters; the original stays visible.",
+  "It must be shown on the batch summary page.",
+  "The batch record loads quickly on shop-floor tablets.",
+  "The batch record page loads in under 2 seconds (p95) on the reference tablet.",
+  "QA can release a batch only when all steps are complete, verified and no deviation is open.",
+  "The batch is released after review.",
+  "Operators may skip non-critical steps.",
+  "Released batch records cannot be changed by any user.",
+  "The system displays the appropriate warning when a scale is out of calibration.",
+  "Weighing results are transferred from the balance automatically; manual entry is refused for critical weights.",
+  "TBD how yield is calculated for partial batches.",
+  "The yield must be between the limits defined in the master record.",
+  "QA can close a deviation after entering an investigation summary and signing.",
+  "Deviations are closed once the investigation is complete.",
+  "The deviation owner can delete a deviation raised in error.",
+  "A deviation raised in error can be voided by QA with a reason and e-signature; it stays in the audit trail.",
+  "CAPA actions must be completed in a timely manner.",
+  "CAPA actions must be completed within 30 days of approval unless QA grants an extension.",
+  "The CAPA effectiveness check is performed after a period defined by QA.",
+  "The system should send reminders before a CAPA is due.",
+  "The system sends an email reminder 7 days and 1 day before a CAPA due date.",
+  "Root cause categories include equipment, material, method, people, etc.",
+  "Deviations are classified as minor, major or critical by QA.",
+  "Critical deviations are escalated to the site head as soon as possible.",
+  "Critical deviations are escalated to the site head by email within 24 hours of classification.",
+  "They are notified when the deviation is classified as critical.",
+  "The investigation report can be modified after approval.",
+  "Every change request needs an impact assessment and approval before implementation.",
+  "The change request is approved by QA and the system owner before implementation.",
+  "Minor changes may be implemented without QA approval.",
+  "The system administrator can override the approval workflow if needed.",
+  "Emergency changes are documented retrospectively within 2 working days with QA approval.",
+  "The change history must be easy to review.",
+  "The change history shows who changed what, when, and why, for every change.",
+  "Only the latest approved version of an SOP is visible to operators.",
+  "Superseded SOPs are archived and retained for the required period.",
+  "Superseded SOPs are retained for 10 years after withdrawal.",
+  "The author can remove a document from the library.",
+  "Documents are reviewed periodically.",
+  "Each SOP is reviewed by its owner every 2 years; overdue reviews are shown on the QA dashboard.",
+  "This should be printed with a watermark.",
+  "Printed copies carry a watermark with the print date, the printing user and \"uncontrolled copy\".",
+  "The search must return relevant documents.",
+  "Document numbering format is TODO.",
+  "Users cannot execute a batch step unless they are trained on the current SOP version.",
+  "Training records are signed by the trainee and the trainer.",
+  "Training must be completed before the deadline.",
+  "The training matrix must be flexible enough for all departments.",
+  "Training assignments are generated automatically when a new SOP version becomes effective.",
+  "A trainer can change a failed assessment result to passed.",
+  "The dashboard must look modern.",
+  "Training completion should be tracked.",
+  "Analysts enter results against the specification; results outside the limits are flagged.",
+  "Results are checked before they are reported.",
+  "A second analyst reviews every result before it is reported to QA.",
+  "Analysts can reject a sample result and re-test.",
+  "Invalidating a result requires a laboratory investigation reference and QA e-signature.",
+  "Instrument data must be imported correctly.",
+  "Stability samples are pulled at the defined time points.",
+  "The sample queue should be sorted sensibly.",
+  "Samples must be tested within the hold time.",
+  "The chromatography integration parameters can be changed by the analyst.",
+  "Accounts lock after 3 consecutive failed login attempts.",
+  "Sessions expire after a period of inactivity.",
+  "Sessions expire after 15 minutes of inactivity.",
+  "Passwords must be strong.",
+  "Passwords have at least 12 characters and expire every 90 days.",
+  "The admin can deactivate a user account.",
+  "User accounts are never deleted; a leaver is deactivated with a reason, and the change is audit-trailed.",
+  "Role changes are approved before they take effect.",
+  "Access rights are reviewed by the system owner every 6 months.",
+  "The system must be secure.",
+  "The audit trail records user, date and time, action, old value, new value and reason.",
+  "The audit trail cannot be edited or deleted by any user, including administrators.",
+  "Audit trail entries are kept as long as needed.",
+  "QA reviews the audit trail of each batch before release.",
+  "The audit trail report may be exported to PDF.",
+  "The audit trail export must include all relevant fields.",
+  "Electronic signatures show the printed name, date, time and meaning of the signature.",
+  "It must be linked to the record it signs.",
+  "The weekly quality report is generated every Monday at 06:00 and emailed to QA managers.",
+  "Reports must support large data volumes.",
+  "The system handles up to 200 concurrent users with p95 response under 3 seconds.",
+  "The ERP interface should be robust.",
+  "Failed ERP messages are retried 3 times and then shown to the system owner for manual resolution.",
+  "Data is backed up regularly.",
+  "A full backup runs daily at 01:00 and a restore is tested every quarter.",
+  "The report layout is to be confirmed with the customer.",
+  "The dashboard shows open deviations, overdue CAPAs and batches awaiting release.",
+  "Users can filter the deviation list by status, severity, date range and product.",
+  "The system must be intuitive for shop-floor users.",
+  "Operators complete a batch step in no more than 3 clicks after scanning the material label."
+ ],
+ "labels": [
+  [],
+  [],
+  [
+   "missing_value",
+   "vague_term",
+   "weak_modal"
+  ],
+  [
+   "missing_actor"
+  ],
+  [],
+  [
+   "missing_value"
+  ],
+  [],
+  [
+   "gxp_control_missing"
+  ],
+  [],
+  [
+   "ambiguous_reference"
+  ],
+  [
+   "vague_term"
+  ],
+  [],
+  [
+   "missing_actor"
+  ],
+  [
+   "missing_actor"
+  ],
+  [
+   "vague_term",
+   "weak_modal"
+  ],
+  [],
+  [
+   "vague_term"
+  ],
+  [
+   "vague_term"
+  ],
+  [
+   "placeholder"
+  ],
+  [
+   "missing_value"
+  ],
+  [],
+  [
+   "missing_actor"
+  ],
+  [
+   "gxp_control_missing"
+  ],
+  [],
+  [
+   "vague_term"
+  ],
+  [],
+  [
+   "missing_value"
+  ],
+  [
+   "weak_modal"
+  ],
+  [],
+  [
+   "vague_term"
+  ],
+  [],
+  [
+   "vague_term"
+  ],
+  [],
+  [
+   "ambiguous_reference",
+   "missing_actor"
+  ],
+  [
+   "gxp_control_missing",
+   "weak_modal"
+  ],
+  [
+   "missing_actor"
+  ],
+  [],
+  [
+   "weak_modal"
+  ],
+  [
+   "gxp_control_missing",
+   "vague_term"
+  ],
+  [],
+  [
+   "vague_term"
+  ],
+  [],
+  [],
+  [
+   "missing_value"
+  ],
+  [],
+  [
+   "gxp_control_missing"
+  ],
+  [
+   "missing_actor",
+   "vague_term"
+  ],
+  [],
+  [
+   "ambiguous_reference",
+   "weak_modal"
+  ],
+  [],
+  [
+   "vague_term"
+  ],
+  [
+   "placeholder"
+  ],
+  [],
+  [],
+  [
+   "missing_value"
+  ],
+  [
+   "vague_term"
+  ],
+  [],
+  [
+   "gxp_control_missing"
+  ],
+  [
+   "vague_term"
+  ],
+  [
+   "weak_modal"
+  ],
+  [],
+  [
+   "missing_actor"
+  ],
+  [],
+  [
+   "gxp_control_missing"
+  ],
+  [],
+  [
+   "vague_term"
+  ],
+  [
+   "vague_term"
+  ],
+  [
+   "vague_term",
+   "weak_modal"
+  ],
+  [
+   "missing_value"
+  ],
+  [
+   "gxp_control_missing"
+  ],
+  [],
+  [
+   "missing_value"
+  ],
+  [],
+  [
+   "vague_term"
+  ],
+  [],
+  [
+   "gxp_control_missing"
+  ],
+  [],
+  [
+   "gxp_control_missing",
+   "missing_actor"
+  ],
+  [],
+  [
+   "vague_term"
+  ],
+  [],
+  [],
+  [
+   "vague_term"
+  ],
+  [],
+  [
+   "weak_modal"
+  ],
+  [
+   "vague_term"
+  ],
+  [],
+  [
+   "ambiguous_reference"
+  ],
+  [],
+  [
+   "vague_term"
+  ],
+  [],
+  [
+   "missing_actor",
+   "vague_term",
+   "weak_modal"
+  ],
+  [
+   "missing_actor"
+  ],
+  [
+   "vague_term"
+  ],
+  [],
+  [
+   "missing_actor",
+   "placeholder"
+  ],
+  [],
+  [],
+  [
+   "vague_term"
+  ],
+  []
+ ]
+}

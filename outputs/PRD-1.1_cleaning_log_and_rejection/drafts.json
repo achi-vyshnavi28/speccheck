@@ -1,0 +1,392 @@
+{
+ "US-101": {
+  "test_cases": [
+   {
+    "title": "Successful Minor Cleaning Record with E-Signature",
+    "type": "positive",
+    "covers": [
+     1,
+     2
+    ],
+    "preconditions": "Operator is logged in with valid Operator role credentials. Equipment is in 'In Use' or 'Dirty' status.",
+    "steps": [
+     "Navigate to the Equipment Cleaning module",
+     "Select Equipment ID EQ-001",
+     "Select cleaning type 'Minor'",
+     "Provide valid e-signature credentials (username and password)",
+     "Click Submit"
+    ],
+    "expected": "The cleaning record is saved successfully. The record displays the operator's user ID and the exact system timestamp of the submission. Equipment status updates to 'Clean (Minor)'. An audit trail entry is generated capturing the event, user, and timestamp per 21 CFR Part 11.",
+    "priority": "high"
+   },
+   {
+    "title": "Major Cleaning Requires Supervisor Verification",
+    "type": "positive",
+    "covers": [
+     1,
+     2,
+     3
+    ],
+    "preconditions": "Operator is logged in. Equipment ID EQ-002 requires cleaning.",
+    "steps": [
+     "Select Equipment ID EQ-002",
+     "Select cleaning type 'Major'",
+     "Submit with Operator e-signature",
+     "Log out and log in with Supervisor credentials",
+     "Navigate to pending major cleaning verifications and approve"
+    ],
+    "expected": "After operator submission, equipment status is set to 'Pending Supervisor Verification'. Upon supervisor approval with e-signature, the status changes to 'Clean (Major)', and the audit trail logs both the operator cleaning record and the supervisor verification with respective timestamps and user IDs.",
+    "priority": "high"
+   },
+   {
+    "title": "Operator Lacks Permission to Verify Major Cleaning",
+    "type": "permission",
+    "covers": [
+     3
+    ],
+    "preconditions": "A major cleaning record has been submitted by an operator and is pending verification.",
+    "steps": [
+     "Log into the system with an Operator role account",
+     "Attempt to access the supervisor verification queue or approve the pending major cleaning record"
+    ],
+    "expected": "The system denies access to the supervisor verification function, displays an unauthorized action error message, and logs a security violation attempt in the 21 CFR Part 11 audit trail.",
+    "priority": "high"
+   },
+   {
+    "title": "Submission Fails with Invalid E-Signature",
+    "type": "negative",
+    "covers": [
+     1
+    ],
+    "preconditions": "Operator is logged into the session, but enters an incorrect password during the e-signature prompt.",
+    "steps": [
+     "Select Equipment EQ-001",
+     "Select cleaning type 'Minor'",
+     "Enter operator username and an invalid password in the e-signature dialog",
+     "Click Submit"
+    ],
+    "expected": "The cleaning record is rejected. The system displays an 'Invalid e-signature credentials' error message, does not save the cleaning record, and records a failed e-signature attempt in the audit trail.",
+    "priority": "high"
+   },
+   {
+    "title": "Audit Trail Verification for Cleaning Record Modification Attempt",
+    "type": "audit",
+    "covers": [
+     2
+    ],
+    "preconditions": "A minor cleaning record has been successfully created and saved in the system.",
+    "steps": [
+     "Access the system database or administrative audit trail viewer as an auditor",
+     "Locate the audit log entry corresponding to the created cleaning record"
+    ],
+    "expected": "The audit trail immutably records the exact timestamp, the operator ID, the equipment ID, the cleaning type, and indicates that the record cannot be deleted or covertly edited, complying with 21 CFR Part 11 requirements.",
+    "priority": "medium"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criteria do not specify the exact time window or expiration limit for how long a cleaning record remains valid before equipment must be re-cleaned or re-verified."
+  ]
+ },
+ "US-102": {
+  "test_cases": [
+   {
+    "title": "Successful Batch Creation on Clean Equipment",
+    "type": "positive",
+    "covers": [
+     1,
+     2
+    ],
+    "preconditions": "Equipment EQ-01 was cleaned 24 hours ago. QA has approved the cleaning status.",
+    "steps": [
+     "Log into MES as Production Operator.",
+     "Navigate to Batch Creation screen.",
+     "Select Equipment EQ-01.",
+     "Click 'Create Batch'."
+    ],
+    "expected": "The system successfully creates the batch and assigns EQ-01 without error.",
+    "priority": "high"
+   },
+   {
+    "title": "Block Batch Creation on Dirty Equipment",
+    "type": "negative",
+    "covers": [
+     1
+    ],
+    "preconditions": "Equipment EQ-02 has been used for a previous batch and has not been cleaned.",
+    "steps": [
+     "Log into MES as Production Operator.",
+     "Navigate to Batch Creation screen.",
+     "Select Equipment EQ-02.",
+     "Attempt to create a batch."
+    ],
+    "expected": "The system blocks batch creation and displays the error message: 'Equipment is not clean. Batch start prohibited.'",
+    "priority": "high"
+   },
+   {
+    "title": "Cleaning Expiration Boundary at 72 Hours",
+    "type": "boundary",
+    "covers": [
+     1,
+     2
+    ],
+    "preconditions": "Equipment EQ-03 was cleaned exactly 71 hours and 59 minutes ago.",
+    "steps": [
+     "Log into MES as Production Operator.",
+     "Select Equipment EQ-03.",
+     "Create a new batch."
+    ],
+    "expected": "Batch creation is permitted because cleaning is within the 72-hour validity window.",
+    "priority": "high"
+   },
+   {
+    "title": "Cleaning Expiration Boundary Past 72 Hours",
+    "type": "boundary",
+    "covers": [
+     1,
+     2
+    ],
+    "preconditions": "Equipment EQ-03 was cleaned 72 hours and 1 minute ago.",
+    "steps": [
+     "Log into MES as Production Operator.",
+     "Select Equipment EQ-03.",
+     "Attempt to create a new batch."
+    ],
+    "expected": "The system blocks batch creation, indicating that the cleaning validity period of 72 hours has expired.",
+    "priority": "high"
+   },
+   {
+    "title": "Unauthorized User Override Attempt",
+    "type": "permission",
+    "covers": [
+     1
+    ],
+    "preconditions": "Equipment EQ-04 is marked as dirty. Logged in user is a standard Operator without QA override privileges.",
+    "steps": [
+     "Attempt to force-start a batch on EQ-04.",
+     "Provide credentials when prompted."
+    ],
+    "expected": "The system denies the request due to insufficient permissions and logs a security event.",
+    "priority": "medium"
+   },
+   {
+    "title": "Audit Trail Verification for Blocked Batch Start",
+    "type": "audit",
+    "covers": [
+     1
+    ],
+    "preconditions": "Equipment EQ-05 is dirty. An operator attempted to start a batch and was blocked.",
+    "steps": [
+     "Log into the system as QA Auditor.",
+     "Navigate to 21 CFR Part 11 Electronic Audit Trail."
+    ],
+    "expected": "An immutable audit log entry exists recording the attempted batch start on dirty equipment, including timestamp, user ID, equipment ID, and the blocking reason.",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": [
+   "It is not specified whether an authorized role (such as QA) can manually override the dirty equipment block, and what electronic signature requirements apply to such an override."
+  ]
+ },
+ "US-103": {
+  "test_cases": [
+   {
+    "title": "Successful Batch Rejection by QA",
+    "type": "positive",
+    "covers": [
+     1,
+     2
+    ],
+    "preconditions": "User is logged in with the QA role. A batch is currently in 'Review' status.",
+    "steps": [
+     "Navigate to the batch management screen for the batch in review.",
+     "Click the 'Reject' button.",
+     "Enter a valid reason for rejection in the mandatory text field.",
+     "Provide valid e-signature credentials (username and password) and submit."
+    ],
+    "expected": "The batch status updates to 'Rejected'. The action is blocked from being released, and a confirmation message is displayed.",
+    "priority": "high"
+   },
+   {
+    "title": "Rejection Attempt by Non-QA Role",
+    "type": "permission",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with an Operator role (non-QA). A batch is currently in 'Review' status.",
+    "steps": [
+     "Navigate to the batch management screen for the batch in review.",
+     "Attempt to locate and click the 'Reject' button."
+    ],
+    "expected": "The 'Reject' button is either hidden, disabled, or accessing the function results in an 'Access Denied' error message.",
+    "priority": "high"
+   },
+   {
+    "title": "Rejection Without Providing a Reason",
+    "type": "negative",
+    "covers": [
+     2
+    ],
+    "preconditions": "User is logged in with the QA role. A batch is currently in 'Review' status.",
+    "steps": [
+     "Navigate to the batch management screen for the batch in review.",
+     "Click the 'Reject' button.",
+     "Leave the reason field blank.",
+     "Attempt to provide e-signature and submit."
+    ],
+    "expected": "The system prevents submission, displays a validation error indicating that a reason is required, and the batch status remains 'Review'.",
+    "priority": "medium"
+   },
+   {
+    "title": "Audit Trail Verification for Batch Rejection",
+    "type": "audit",
+    "covers": [
+     1,
+     2
+    ],
+    "preconditions": "A batch has been successfully rejected by a QA user with a specified reason and e-signature.",
+    "steps": [
+     "Navigate to the system Audit Trail.",
+     "Filter for the specific batch ID and the rejection event."
+    ],
+    "expected": "The audit trail records the exact timestamp, the user ID of the QA, the reason for rejection, the old status ('Review'), and the new status ('Rejected') in compliance with 21 CFR Part 11.",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criterion 3 mentions that 'The system should handle rejection quickly and be user-friendly', which lacks quantifiable performance thresholds (e.g., exact response time in seconds) and objective usability metrics to write an exact expected result."
+  ]
+ },
+ "US-104": {
+  "test_cases": [
+   {
+    "title": "QA Successful Cleaning Check Override",
+    "type": "positive",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with the QA role. A cleaning check is currently in a 'Failed' or 'Pending' state.",
+    "steps": [
+     "Navigate to the cleaning check details page for Equipment EQ-001.",
+     "Click the 'Override' button.",
+     "Enter a mandatory justification reason in the prompt.",
+     "Submit the override action."
+    ],
+    "expected": "The system successfully processes the override, updates the cleaning check status to 'Overridden by QA', and displays a success notification.",
+    "priority": "high"
+   },
+   {
+    "title": "Unauthorized Role Attempt to Override Cleaning Check",
+    "type": "permission",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with the Operator role (non-QA). A cleaning check is in a 'Failed' state.",
+    "steps": [
+     "Navigate to the cleaning check details page for Equipment EQ-001.",
+     "Attempt to locate or click the 'Override' button."
+    ],
+    "expected": "The 'Override' button is either hidden, disabled, or attempting the action results in an access denied error message ('Error 403: Insufficient Privileges').",
+    "priority": "high"
+   },
+   {
+    "title": "Audit Trail and Electronic Signature Capture on Override",
+    "type": "audit",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with the QA role. Cleaning check is ready for override.",
+    "steps": [
+     "Click 'Override' on the cleaning check record.",
+     "Provide a valid justification reason.",
+     "Enter electronic signature credentials (username and password) when prompted and confirm.",
+     "Navigate to the system audit trail for Equipment EQ-001."
+    ],
+    "expected": "An immutable audit trail entry is generated containing the exact timestamp, QA user ID, previous status, new status, the mandatory justification reason, and the linked electronic signature record in compliance with 21 CFR Part 11.",
+    "priority": "high"
+   },
+   {
+    "title": "Override Attempt Without Mandatory Justification Reason",
+    "type": "negative",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with the QA role. Cleaning check is ready for override.",
+    "steps": [
+     "Click 'Override' on the cleaning check record.",
+     "Leave the justification reason field blank.",
+     "Attempt to submit the override."
+    ],
+    "expected": "The system blocks the submission, displays a validation error stating that a justification reason is required, and does not change the cleaning check status.",
+    "priority": "medium"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criterion 1 ('QA can override as needed') does not specify constraints on time windows, maximum number of allowed overrides, or specific pre-requisite statuses required for an override, making boundary testing for time or status limits speculative."
+  ]
+ },
+ "US-105": {
+  "test_cases": [
+   {
+    "title": "Generate cleaning report with default parameters",
+    "type": "positive",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with QA Manager role and cleaning records exist in the system.",
+    "steps": [
+     "Navigate to the Reports module.",
+     "Select 'Cleaning Report'.",
+     "Click 'Generate'."
+    ],
+    "expected": "The cleaning report is successfully generated and displays all recorded cleaning events.",
+    "priority": "high"
+   },
+   {
+    "title": "Access cleaning report with unauthorized role",
+    "type": "permission",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with an unauthorized role (e.g., Warehouse Operator).",
+    "steps": [
+     "Attempt to navigate to the Cleaning Report generation page via URL or menu."
+    ],
+    "expected": "System denies access, displays an 'Unauthorized' error message, and blocks report generation.",
+    "priority": "high"
+   },
+   {
+    "title": "Verify audit trail generation upon report export",
+    "type": "audit",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with QA Manager role.",
+    "steps": [
+     "Generate the cleaning report.",
+     "Export the report as a PDF.",
+     "Navigate to the 21 CFR Part 11 compliant System Audit Trail."
+    ],
+    "expected": "An audit trail entry is automatically recorded capturing the User ID, timestamp, and the action of generating and exporting the cleaning report.",
+    "priority": "high"
+   },
+   {
+    "title": "Generate cleaning report for a maximum date range boundary",
+    "type": "boundary",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with QA Manager role.",
+    "steps": [
+     "Navigate to the Cleaning Report module.",
+     "Select a date range spanning exactly 5 years (maximum allowed retention/query limit).",
+     "Click 'Generate'."
+    ],
+    "expected": "The report processes successfully and displays cleaning records for the entire 5-year boundary without performance timeout.",
+    "priority": "medium"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criterion 1 states 'TBD which filters', meaning the specific filter fields (e.g., equipment ID, date range, cleaning status, operator ID) are not yet defined, preventing exact expected results for filter-specific test cases."
+  ]
+ }
+}

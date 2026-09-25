@@ -1,0 +1,368 @@
+{
+ "TR-301": {
+  "test_cases": [
+   {
+    "title": "Automatic Training Assignment on SOP Effective Date",
+    "type": "positive",
+    "covers": [
+     1,
+     2
+    ],
+    "preconditions": "SOP-001 v2.0 is approved and scheduled to become effective on 2023-10-01. User A holds a role requiring SOP-001.",
+    "steps": [
+     "Trigger the system job when SOP-001 v2.0 reaches its effective date of 2023-10-01.",
+     "Log in as User A and navigate to the assigned training dashboard."
+    ],
+    "expected": "User A has a new training assignment for SOP-001 v2.0 with a due date exactly 14 days post-effective date (2023-10-15).",
+    "priority": "high"
+   },
+   {
+    "title": "No Training Assignment Generated for Unaffected Roles",
+    "type": "negative",
+    "covers": [
+     1
+    ],
+    "preconditions": "SOP-001 v2.0 is effective. User B holds a role that does not require SOP-001.",
+    "steps": [
+     "Log in as User B.",
+     "Navigate to the assigned training dashboard."
+    ],
+    "expected": "User B does not receive a training assignment for SOP-001 v2.0.",
+    "priority": "medium"
+   },
+   {
+    "title": "Unauthorized User Attempts to Trigger SOP Effective Date",
+    "type": "permission",
+    "covers": [],
+    "preconditions": "User C is logged in with the 'General Employee' role, lacking QA Manager or System Administrator privileges.",
+    "steps": [
+     "Attempt to manually set SOP-001 v2.0 status to Effective."
+    ],
+    "expected": "The system blocks the action and displays an 'Access Denied' error message.",
+    "priority": "high"
+   },
+   {
+    "title": "Audit Trail Verification for Automated Training Assignment Generation",
+    "type": "audit",
+    "covers": [
+     1,
+     2
+    ],
+    "preconditions": "SOP-001 v2.0 has reached its effective date and assignments have been automatically generated.",
+    "steps": [
+     "Log in as Compliance Officer.",
+     "Navigate to the system Audit Trail and filter by SOP-001 v2.0 training generation events."
+    ],
+    "expected": "The audit log records a timestamped entry capturing the system event, the affected user IDs, the assigned training ID, and the calculated due date (2023-10-15) in compliance with 21 CFR Part 11.",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criterion 3 states 'Users who are on leave are handled appropriately,' but does not specify whether training assignments should be suppressed during leave, generated immediately with an extended due date, or deferred until the user returns from leave."
+  ]
+ },
+ "TR-302": {
+  "test_cases": [
+   {
+    "title": "Trainee records standard training completion with e-signature",
+    "type": "positive",
+    "covers": [
+     1,
+     2
+    ],
+    "preconditions": "Trainee is logged in. Training assignment requires trainer verification.",
+    "steps": [
+     "Navigate to assigned training item SOP-001 v2.0.",
+     "Click 'Complete Training'.",
+     "Enter e-signature credentials (username, password, and meaning of signature) stating SOP number SOP-001 and version 2.0.",
+     "Submit."
+    ],
+    "expected": "Training status updates to 'Pending Verification', an immutable audit trail entry is created recording the trainee ID, timestamp, SOP number, SOP version, and the e-signature manifestation.",
+    "priority": "high"
+   },
+   {
+    "title": "Trainer attempts to verify own training completion",
+    "type": "negative",
+    "covers": [
+     2
+    ],
+    "preconditions": "User is assigned as the trainer for their own trainee record.",
+    "steps": [
+     "Log in as User A (who is both trainee and designated trainer for this record).",
+     "Attempt to sign and verify training completion for SOP-001 v2.0."
+    ],
+    "expected": "System displays an error message 'Trainer cannot be the same as the trainee' and blocks the e-signature submission.",
+    "priority": "high"
+   },
+   {
+    "title": "Read-and-understood assignment bypasses trainer verification",
+    "type": "positive",
+    "covers": [
+     1,
+     3
+    ],
+    "preconditions": "Trainee is logged in and has a 'Read-and-Understood' type training assigned for SOP-002 v1.0.",
+    "steps": [
+     "Open SOP-002 v1.0 assignment.",
+     "Confirm completion by providing e-signature stating SOP-002 and version 1.0.",
+     "Submit."
+    ],
+    "expected": "Training status immediately updates directly to 'Completed' without requiring trainer verification, and an audit trail entry is generated.",
+    "priority": "high"
+   },
+   {
+    "title": "Unauthorized user attempts to record training completion",
+    "type": "permission",
+    "covers": [
+     1
+    ],
+    "preconditions": "User without 'Trainee' role is logged in.",
+    "steps": [
+     "Attempt to access a training completion form for SOP-003 v1.0."
+    ],
+    "expected": "System denies access, displays a 'Permission Denied' message, and logs an unauthorized access attempt in the security audit trail.",
+    "priority": "medium"
+   },
+   {
+    "title": "E-signature audit trail verification for Part 11 compliance",
+    "type": "audit",
+    "covers": [
+     1
+    ],
+    "preconditions": "Trainee has successfully recorded training completion with an e-signature.",
+    "steps": [
+     "Log in as system administrator.",
+     "Navigate to the system Audit Trail report for the specific training record."
+    ],
+    "expected": "Audit trail displays the printed name of the signer, date/time of signature, meaning of the signature, and the associated SOP number and version, complying with 21 CFR Part 11 requirements.",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criteria do not specify the exact format required for stating the SOP number and version within the e-signature prompt (e.g., free text vs. system-enforced dropdown selection)."
+  ]
+ },
+ "TR-303": {
+  "test_cases": [
+   {
+    "title": "Trained user signs batch step successfully",
+    "type": "positive",
+    "covers": [
+     1
+    ],
+    "preconditions": "User A has a completed training record for SOP-100 v2.0 linked to Batch Step 5.",
+    "steps": [
+     "Log in as User A.",
+     "Navigate to Batch Record BR-001, Step 5.",
+     "Attempt to execute and sign the step."
+    ],
+    "expected": "The system allows the signature, completes the step, and records the e-signature with timestamp, user ID, and meaning.",
+    "priority": "high"
+   },
+   {
+    "title": "Untrained user blocked from signing batch step",
+    "type": "negative",
+    "covers": [
+     1,
+     2
+    ],
+    "preconditions": "User B has no training record for SOP-100 v2.0 linked to Batch Step 5.",
+    "steps": [
+     "Log in as User B.",
+     "Navigate to Batch Record BR-001, Step 5.",
+     "Attempt to execute and sign the step."
+    ],
+    "expected": "The system blocks the signature and displays an error message explicitly naming 'SOP-100' and version '2.0'.",
+    "priority": "high"
+   },
+   {
+    "title": "Emergency override allows untrained user execution with audit trail",
+    "type": "positive",
+    "covers": [
+     3
+    ],
+    "preconditions": "User C is untrained on SOP-100 v2.0. QA Manager has emergency override privileges.",
+    "steps": [
+     "Log in as User C and attempt to sign Batch Step 5 (blocked).",
+     "Initiate emergency override workflow.",
+     "Authenticate with QA Manager credentials and enter a mandatory justification reason."
+    ],
+    "expected": "The system permits the step execution, and the audit trail captures the override event, the QA Manager ID, User C ID, and the justification text.",
+    "priority": "medium"
+   },
+   {
+    "title": "Non-authorized role attempts emergency override",
+    "type": "permission",
+    "covers": [
+     3
+    ],
+    "preconditions": "User D (Operator role) attempts to use the emergency override feature.",
+    "steps": [
+     "Encounter the training block for Batch Step 5.",
+     "Select the emergency override option.",
+     "Attempt to execute the override using User D credentials."
+    ],
+    "expected": "The system denies the override request due to insufficient role permissions and logs a security violation event in the audit trail.",
+    "priority": "high"
+   },
+   {
+    "title": "Audit trail records failed training check attempts",
+    "type": "audit",
+    "covers": [
+     1,
+     2
+    ],
+    "preconditions": "User B is untrained on SOP-100 v2.0.",
+    "steps": [
+     "Attempt to sign Batch Step 5 as User B.",
+     "Observe the block message.",
+     "Navigate to the system Audit Trail report."
+    ],
+    "expected": "An audit log entry exists showing the failed signature attempt, user ID, timestamp, target batch step, and the missing training requirement (SOP-100 v2.0).",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criterion 3 states it must be possible to override in an emergency, but does not define who has the authority to authorize the override, what constitutes an emergency, or the exact electronic signature re-authentication requirements for the override."
+  ]
+ },
+ "TR-304": {
+  "test_cases": [
+   {
+    "title": "Generate Batch Training Report - Happy Path",
+    "type": "positive",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in with QA Reviewer role. A completed batch record exists with multiple signed steps and associated SOPs.",
+    "steps": [
+     "Navigate to the Batch Training Report module.",
+     "Select Batch ID 'B12345'.",
+     "Click 'Generate Report'."
+    ],
+    "expected": "The report displays a list of all operators who signed batch steps, the specific SOPs linked to those steps, and the valid training completion date for each operator against each SOP.",
+    "priority": "high"
+   },
+   {
+    "title": "Unauthorized Access to Batch Training Report",
+    "type": "permission",
+    "covers": [],
+    "preconditions": "User is logged in with a restricted role (e.g., 'Operator' without QA privileges).",
+    "steps": [
+     "Attempt to navigate to the Batch Training Report module or access Batch ID 'B12345' training report via direct URL."
+    ],
+    "expected": "The system denies access, displays an 'Unauthorized' error message, and logs a security event in the audit trail.",
+    "priority": "high"
+   },
+   {
+    "title": "Export Batch Training Report",
+    "type": "positive",
+    "covers": [
+     3
+    ],
+    "preconditions": "QA Reviewer has successfully generated the training report for Batch ID 'B12345'.",
+    "steps": [
+     "Click the 'Export' button on the report view.",
+     "Select format (PDF/CSV)."
+    ],
+    "expected": "The system successfully downloads the complete batch training report in the selected format without data truncation.",
+    "priority": "medium"
+   },
+   {
+    "title": "Audit Trail Verification for Report Generation and Export",
+    "type": "audit",
+    "covers": [],
+    "preconditions": "QA Reviewer has generated and exported the training report for Batch ID 'B12345'.",
+    "steps": [
+     "Navigate to the System Audit Trail.",
+     "Filter by Batch ID 'B12345' and recent timestamp."
+    ],
+    "expected": "An immutable audit trail entry is recorded containing the user ID, timestamp, exact action performed ('Generated Report' and 'Exported Report'), and the Batch ID.",
+    "priority": "high"
+   },
+   {
+    "title": "Report Generation with Non-Existent Batch ID",
+    "type": "negative",
+    "covers": [],
+    "preconditions": "User is logged in with QA Reviewer role.",
+    "steps": [
+     "Navigate to the Batch Training Report module.",
+     "Enter a non-existent or invalid Batch ID 'INVALID-999'.",
+     "Click 'Generate Report'."
+    ],
+    "expected": "The system displays an error message stating 'Batch not found' and does not generate a report.",
+    "priority": "medium"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criterion 2 states 'The report should be fast', but does not specify a maximum acceptable load time threshold (e.g., 'under 5 seconds').",
+   "Acceptance criterion 3 states 'The report can be exported', but does not specify the mandatory file formats required (e.g., PDF, CSV, Excel)."
+  ]
+ },
+ "TR-305": {
+  "test_cases": [
+   {
+    "title": "Successful Correction of Completion Date by Training Coordinator",
+    "type": "positive",
+    "covers": [
+     1,
+     2
+    ],
+    "preconditions": "User is logged in with the Training Coordinator role. A training record with an incorrect completion date exists.",
+    "steps": [
+     "Navigate to the target training record.",
+     "Click 'Edit Completion Date'.",
+     "Select a new valid completion date.",
+     "Provide a mandatory audit reason for the correction and save."
+    ],
+    "expected": "The training record displays the new completion date. The old completion date is successfully retained and viewable in the system history/audit trail.",
+    "priority": "high"
+   },
+   {
+    "title": "Access Denied for Standard Employee Role",
+    "type": "permission",
+    "covers": [],
+    "preconditions": "User is logged in with a Standard Employee role (non-coordinator). A training record exists.",
+    "steps": [
+     "Attempt to navigate to the training record edit function for completion date."
+    ],
+    "expected": "The system denies access, either by hiding the edit option or displaying an 'Unauthorized access' error message.",
+    "priority": "high"
+   },
+   {
+    "title": "Future Date Boundary Validation",
+    "type": "boundary",
+    "covers": [
+     1
+    ],
+    "preconditions": "User is logged in as a Training Coordinator.",
+    "steps": [
+     "Open a training record for editing.",
+     "Attempt to set the completion date to a date in the future (e.g., tomorrow's date).",
+     "Click save."
+    ],
+    "expected": "The system rejects the entry and displays a validation error stating that future completion dates are not permitted.",
+    "priority": "medium"
+   },
+   {
+    "title": "Audit Trail and Electronic Signature Capture",
+    "type": "audit",
+    "covers": [
+     2
+    ],
+    "preconditions": "User is logged in as a Training Coordinator and modifies a training completion date.",
+    "steps": [
+     "Modify the completion date and click save.",
+     "Enter electronic signature credentials (username and password) when prompted.",
+     "Access the 21 CFR Part 11 compliant audit trail for this training record."
+    ],
+    "expected": "The audit trail records the user ID, timestamp, the old completion date, the new completion date, and the reason for change, accompanied by the valid electronic signature context.",
+    "priority": "high"
+   }
+  ],
+  "ambiguities": [
+   "Acceptance criteria do not specify the acceptable historical time window limits for how far back a completion date can be backdated.",
+   "Acceptance criteria do not define whether specific electronic signature re-authentication is required upon saving the date change, or if a reason-for-change text field alone is sufficient."
+  ]
+ }
+}

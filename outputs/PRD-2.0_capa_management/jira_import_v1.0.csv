@@ -1,0 +1,61 @@
+Summary,Issue Type,Description,Priority,Labels
+CAPA-201 Create a CAPA from a deviation,Story,"As a QA specialist, I want to create a CAPA directly from a deviation, so the link between problem and action is never lost.
+
+Acceptance criteria:
+* The CAPA copies the deviation number, product and root cause category from the deviation.
+* A CAPA cannot be created from a deviation that is still under investigation.
+* Creating a CAPA is recorded in the audit trail with user, date and time.",Medium,PRD-2.0
+CAPA-202 Assign actions with due dates,Story,"As a CAPA owner, I want to assign actions to people with due dates, so everyone knows what they must do and by when.
+
+Acceptance criteria:
+* Each action has exactly one assignee, a description and a due date.
+* Due dates must be reasonable.
+* The assignee should receive a notification.",Medium,PRD-2.0
+CAPA-203 Escalate overdue actions,Story,"As a QA manager, I want overdue actions escalated, so CAPAs don't silently slip.
+
+Acceptance criteria:
+* Overdue actions are escalated to the manager.
+* Escalations happen quickly.",Medium,PRD-2.0
+CAPA-204 Close a CAPA,Story,"As a QA manager, I want to close a CAPA only when all actions are done and evidence is attached.
+
+Acceptance criteria:
+* A CAPA cannot be closed while any action is open.
+* Closing requires an effectiveness check plan, a closure summary of at least 50 characters and the QA manager's e-signature.
+* The closure is recorded in the audit trail.",Medium,PRD-2.0
+CAPA-205 Edit a closed CAPA,Story,"As a CAPA owner, I want to edit a closed CAPA if I made a mistake.
+
+Acceptance criteria:
+* The owner can edit any field of a closed CAPA.",Medium,PRD-2.0
+CAPA-206 Effectiveness check,Story,"As QA, I want to check that the CAPA actually worked.
+
+Acceptance criteria:
+* The effectiveness check is performed after a suitable period.
+* Results are approved.
+* TBD: what happens if the CAPA was not effective.",Medium,PRD-2.0
+[Spec gap] CAPA-202 (no negative behaviour): Assign actions with due dates,Task,"Rule: no_negative_behaviour
+Why: No criterion says what happens when a rule is broken.
+Question: What does the system do on invalid input or a wrong role (message, block, audit entry)?",Medium,PRD-2.0 requirement-gap
+[Spec gap] CAPA-202 (vague term): Due dates must be reasonable.,Task,"Rule: vague_term
+Why: 'reasonable' has no pass/fail criterion.
+Question: What is reasonable, specifically?",Medium,PRD-2.0 requirement-gap
+[Spec gap] CAPA-202 (weak modal): The assignee should receive a notification.,Task,"Rule: weak_modal
+Why: 'should' makes it unclear whether this is mandatory.
+Question: Is this mandatory ('must') or optional?",Low,PRD-2.0 requirement-gap
+[Spec gap] CAPA-203 (no negative behaviour): Escalate overdue actions,Task,"Rule: no_negative_behaviour
+Why: No criterion says what happens when a rule is broken.
+Question: What does the system do on invalid input or a wrong role (message, block, audit entry)?",Medium,PRD-2.0 requirement-gap
+[Spec gap] CAPA-203 (vague term): Escalations happen quickly.,Task,"Rule: vague_term
+Why: 'quickly' has no pass/fail criterion.
+Question: What response time, measured how (e.g. p95 < 2 s)?",Medium,PRD-2.0 requirement-gap
+[Spec gap] CAPA-205 (thin acceptance criteria): Edit a closed CAPA,Task,"Rule: thin_acceptance_criteria
+Why: Only 1 acceptance criterion; negative and boundary behaviour are undefined.
+Question: What should happen on invalid input, wrong role, and at the limits?",Medium,PRD-2.0 requirement-gap
+[Spec gap] CAPA-205 (gxp control missing): The owner can edit any field of a closed CAPA.,Task,"Rule: gxp_control_missing
+Why: A GMP-relevant action (override/delete/change/reject) without a required reason, e-signature or audit-trail entry (21 CFR 11.10(e), 11.50).
+Question: Must this action require a reason, an e-signature and an audit-trail entry? Who may perform it?",High,PRD-2.0 requirement-gap
+[Spec gap] CAPA-206 (missing actor): Results are approved.,Task,"Rule: missing_actor
+Why: A human action with no role: the record would not be attributable (ALCOA+ 'Attributable').
+Question: Which role performs this, and can the same person do the previous step?",Medium,PRD-2.0 requirement-gap
+[Spec gap] CAPA-206 (placeholder): TBD: what happens if the CAPA was not effective.,Task,"Rule: placeholder
+Why: Requirement is not decided yet.
+Question: Please decide and specify before development starts.",High,PRD-2.0 requirement-gap

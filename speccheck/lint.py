@@ -77,7 +77,9 @@ PLACEHOLDER = re.compile(r"\b(TBD|TBC|TODO|to be (decided|confirmed|defined))\b|
 WEAK_MODAL = _words("should", "may", "could", "might", "ideally", "where possible", "if possible", "optionally")
 LIMIT = _words("within", "limit", "limited", "maximum", "minimum", "max", "min", "timeout", "expire", "expires",
                "expired", "valid for", "retained for", "retain", "threshold", "tolerance", "after a period", "up to",
-               "deadline", "due")
+               "deadline")
+DUE = re.compile(r"\bdue\b(?!\s+dates?\b)", re.I)  # "due" implies a limit; "due date" is just a field name
+PROHIBITED = re.compile(r"\b(cannot|can't|must not|may not|never)\s+be\b", re.I)
 REFERENCE = re.compile(r"^(it|this|that|they|these|those)\b", re.I)
 HUMAN_PASSIVE = re.compile(r"\b(is|are|be|been|gets|get)\s+(approved|verified|reviewed|signed|checked|confirmed|"
                            r"closed|released|authori[sz]ed|investigated|assessed)\b"
@@ -118,13 +120,14 @@ def check(text: str, context: str = "") -> list[Finding]:
     if m := WEAK_MODAL.search(text):
         out.append(Finding("weak_modal", "low", f"'{m.group(1).lower()}' makes it unclear whether this is mandatory.",
                            "Is this mandatory ('must') or optional?"))
-    if (m := LIMIT.search(text)) and not has_number:
-        out.append(Finding("missing_value", "medium", f"'{m.group(1).lower()}' implies a limit, but no value is given.",
+    if (m := LIMIT.search(text) or DUE.search(text)) and not has_number:
+        out.append(Finding("missing_value", "medium", f"'{m.group(0).lower()}' implies a limit, but no value is given.",
                            "What is the exact value and unit?"))
     if REFERENCE.search(text.strip()):
         out.append(Finding("ambiguous_reference", "low", "Starts with a pronoun; the tester can't tell what it refers to.",
                            "Name the object explicitly."))
-    if HUMAN_PASSIVE.search(text) and not ACTOR.search(text) and not PLACEHOLDER.search(text):
+    prohibited = PROHIBITED.search(text)  # "cannot be closed while..." is a rule on the system, not a human action
+    if HUMAN_PASSIVE.search(text) and not ACTOR.search(text) and not PLACEHOLDER.search(text) and not prohibited:
         out.append(Finding("missing_actor", "medium",
                            "A human action with no role: the record would not be attributable (ALCOA+ 'Attributable').",
                            "Which role performs this, and can the same person do the previous step?"))

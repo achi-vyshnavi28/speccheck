@@ -1,0 +1,152 @@
+{
+ "Rules only": {
+  "per_type": {
+   "vague_term": {
+    "tp": 22,
+    "fp": 0,
+    "fn": 0,
+    "support": 22
+   },
+   "placeholder": {
+    "tp": 3,
+    "fp": 0,
+    "fn": 0,
+    "support": 3
+   },
+   "weak_modal": {
+    "tp": 9,
+    "fp": 0,
+    "fn": 0,
+    "support": 9
+   },
+   "missing_value": {
+    "tp": 7,
+    "fp": 1,
+    "fn": 0,
+    "support": 7
+   },
+   "ambiguous_reference": {
+    "tp": 4,
+    "fp": 0,
+    "fn": 0,
+    "support": 4
+   },
+   "missing_actor": {
+    "tp": 5,
+    "fp": 1,
+    "fn": 2,
+    "support": 7
+   },
+   "gxp_control_missing": {
+    "tp": 9,
+    "fp": 0,
+    "fn": 0,
+    "support": 9
+   }
+  },
+  "precision": 0.9672131147540983,
+  "recall": 0.9672131147540983,
+  "item_accuracy": 0.98,
+  "false_alarm_rate": 0.0
+ },
+ "LLM only": {
+  "per_type": {
+   "vague_term": {
+    "tp": 22,
+    "fp": 3,
+    "fn": 0,
+    "support": 22
+   },
+   "placeholder": {
+    "tp": 3,
+    "fp": 0,
+    "fn": 0,
+    "support": 3
+   },
+   "weak_modal": {
+    "tp": 9,
+    "fp": 1,
+    "fn": 0,
+    "support": 9
+   },
+   "missing_value": {
+    "tp": 6,
+    "fp": 2,
+    "fn": 1,
+    "support": 7
+   },
+   "ambiguous_reference": {
+    "tp": 4,
+    "fp": 0,
+    "fn": 0,
+    "support": 4
+   },
+   "missing_actor": {
+    "tp": 7,
+    "fp": 5,
+    "fn": 0,
+    "support": 7
+   },
+   "gxp_control_missing": {
+    "tp": 9,
+    "fp": 1,
+    "fn": 0,
+    "support": 9
+   }
+  },
+  "precision": 0.8333333333333334,
+  "recall": 0.9836065573770492,
+  "item_accuracy": 0.95,
+  "false_alarm_rate": 0.10869565217391304
+ },
+ "Rules + LLM (union)": {
+  "per_type": {
+   "vague_term": {
+    "tp": 22,
+    "fp": 3,
+    "fn": 0,
+    "support": 22
+   },
+   "placeholder": {
+    "tp": 3,
+    "fp": 0,
+    "fn": 0,
+    "support": 3
+   },
+   "weak_modal": {
+    "tp": 9,
+    "fp": 1,
+    "fn": 0,
+    "support": 9
+   },
+   "missing_value": {
+    "tp": 7,
+    "fp": 2,
+    "fn": 0,
+    "support": 7
+   },
+   "ambiguous_reference": {
+    "tp": 4,
+    "fp": 0,
+    "fn": 0,
+    "support": 4
+   },
+   "missing_actor": {
+    "tp": 7,
+    "fp": 6,
+    "fn": 0,
+    "support": 7
+   },
+   "gxp_control_missing": {
+    "tp": 9,
+    "fp": 1,
+    "fn": 0,
+    "support": 9
+   }
+  },
+  "precision": 0.8243243243243243,
+  "recall": 1.0,
+  "item_accuracy": 0.95,
+  "false_alarm_rate": 0.10869565217391304
+ }
+}

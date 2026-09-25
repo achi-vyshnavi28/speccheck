@@ -107,7 +107,7 @@ def draft(story: Story, llm: LLM = gemini) -> Drafted:
     return Drafted.model_validate(_json(llm(prompt)))
 
 
-def review(texts: list[str], llm: LLM = gemini, batch: int = 25) -> list[list[str]]:
+def review(texts: list[str], llm: LLM = gemini, batch: int = 10) -> list[list[str]]:
     """LLM defect labels per requirement, restricted to the known defect types."""
     out: list[list[str]] = []
     types = "\n".join(f"- {k}: {v}" for k, v in DEFECTS.items())

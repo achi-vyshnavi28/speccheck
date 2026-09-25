@@ -1,0 +1,209 @@
+{
+ "texts": [
+  "Materials in quarantine cannot be issued to production.",
+  "Released materials are moved to the approved area promptly.",
+  "The warehouse clerk scans the container label before issuing material; an unreleased container is refused.",
+  "Expired materials should be blocked automatically.",
+  "Material status is changed from quarantine to released.",
+  "QA changes the material status from quarantine to released with an e-signature.",
+  "Retest dates are calculated from the date of receipt using the retest interval in the material master.",
+  "Stock levels must be accurate.",
+  "Instruments that are overdue for calibration cannot be selected in a batch step.",
+  "Calibration certificates are uploaded and approved.",
+  "The metrology engineer approves each calibration certificate before the instrument returns to use.",
+  "Calibration intervals can be extended by the engineer.",
+  "A calibration interval can be extended once, by up to 30 days, with a documented justification approved by QA.",
+  "Preventive maintenance is scheduled at suitable intervals.",
+  "It is flagged on the equipment dashboard when maintenance is overdue.",
+  "Maintenance work orders are closed by the technician and verified by the area supervisor.",
+  "Particle counts above the alert limit trigger an alarm to the area supervisor within 1 minute.",
+  "Excursions must be investigated.",
+  "Microbiology can edit plate counts after they are entered.",
+  "Viable monitoring results are trended monthly per room and sampling point.",
+  "The trend chart should highlight unusual results.",
+  "Settle plates are exposed for no more than 4 hours.",
+  "Sampling locations are TBD per room classification.",
+  "Every complaint is logged within 1 working day of receipt.",
+  "Complaints are acknowledged to the customer quickly.",
+  "The complaint handler may close a complaint with no investigation if it is not product-related.",
+  "A complaint can be reopened by the complaint owner.",
+  "Recall decisions are documented and approved by the quality head with an e-signature.",
+  "Customers are informed of a recall within the required timeframe.",
+  "This must include the batch number and the reason for the recall.",
+  "Each saleable pack receives a unique serial number that is never reused.",
+  "Serial numbers can be decommissioned by the packaging operator.",
+  "Aggregation data is sent to the national repository without delay.",
+  "Aggregation data is sent to the national repository within 15 minutes of the case being sealed.",
+  "The line should reject packs with unreadable codes.",
+  "The vision system rejects packs whose 2D code grade is below C, and logs each rejection.",
+  "Suppliers are requalified every 3 years or after a major quality event.",
+  "New suppliers are approved before first use.",
+  "The supplier questionnaire covers quality, regulatory, logistics, etc.",
+  "A supplier can be removed from the approved list by purchasing.",
+  "Audit findings are closed within the agreed period.",
+  "The supplier scorecard is updated every quarter from delivery, complaint and audit data.",
+  "Serious adverse events are reported to the authority within 15 calendar days.",
+  "Case narratives must be clear and complete.",
+  "The safety physician signs each medical assessment electronically.",
+  "Case data can be changed after submission.",
+  "Trial master file documents are filed within 5 working days of finalisation.",
+  "Essential documents are QC-checked.",
+  "The eTMF must support all relevant document types.",
+  "Site staff might need access to the investigator folder.",
+  "Each use, cleaning and maintenance event is entered in the equipment logbook with user, date and time.",
+  "Logbook entries are reviewed by production.",
+  "A logbook entry can be deleted by the supervisor.",
+  "Swab results must be below the acceptance limit.",
+  "Swab results must be below 10 ppm of the previous product.",
+  "Cleaning must be effective.",
+  "The dirty hold time is to be defined by validation.",
+  "Equipment must be cleaned within 24 hours of batch end.",
+  "Cleaning records are verified before the equipment is released for the next batch.",
+  "The cleaning log is simple to fill in on the shop floor."
+ ],
+ "labels": [
+  [],
+  [
+   "missing_actor",
+   "vague_term"
+  ],
+  [],
+  [
+   "weak_modal"
+  ],
+  [
+   "gxp_control_missing",
+   "missing_actor"
+  ],
+  [],
+  [],
+  [
+   "vague_term"
+  ],
+  [],
+  [
+   "missing_actor"
+  ],
+  [],
+  [
+   "gxp_control_missing",
+   "missing_value",
+   "weak_modal"
+  ],
+  [],
+  [
+   "missing_value",
+   "vague_term"
+  ],
+  [],
+  [],
+  [],
+  [
+   "gxp_control_missing",
+   "missing_actor",
+   "missing_value",
+   "vague_term"
+  ],
+  [
+   "gxp_control_missing"
+  ],
+  [],
+  [
+   "vague_term",
+   "weak_modal"
+  ],
+  [],
+  [
+   "placeholder"
+  ],
+  [],
+  [
+   "vague_term"
+  ],
+  [
+   "gxp_control_missing",
+   "weak_modal"
+  ],
+  [
+   "gxp_control_missing"
+  ],
+  [],
+  [
+   "missing_value"
+  ],
+  [
+   "ambiguous_reference"
+  ],
+  [],
+  [
+   "gxp_control_missing"
+  ],
+  [
+   "vague_term"
+  ],
+  [],
+  [
+   "gxp_control_missing",
+   "weak_modal"
+  ],
+  [],
+  [],
+  [
+   "missing_actor"
+  ],
+  [
+   "vague_term"
+  ],
+  [
+   "gxp_control_missing"
+  ],
+  [
+   "missing_value",
+   "vague_term"
+  ],
+  [],
+  [],
+  [
+   "vague_term"
+  ],
+  [],
+  [
+   "gxp_control_missing"
+  ],
+  [],
+  [
+   "missing_actor"
+  ],
+  [
+   "vague_term"
+  ],
+  [
+   "vague_term",
+   "weak_modal"
+  ],
+  [],
+  [
+   "missing_actor"
+  ],
+  [
+   "gxp_control_missing"
+  ],
+  [
+   "missing_value"
+  ],
+  [],
+  [
+   "vague_term"
+  ],
+  [
+   "placeholder"
+  ],
+  [],
+  [
+   "missing_actor"
+  ],
+  [
+   "vague_term"
+  ]
+ ]
+}

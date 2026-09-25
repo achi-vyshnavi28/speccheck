@@ -1,9 +1,9 @@
 """Measure SpecCheck against the labelled requirements in evals/requirements.yaml.
 
-    python -m evals.run_eval            # rules + LLM (needs GEMINI_API_KEY)
-    python -m evals.run_eval --no-llm   # rules only
+    python -m evals.run_eval --set heldout            # rules + LLM (needs GEMINI_API_KEY)
+    python -m evals.run_eval --set dev --no-llm       # rules only
 
-Writes evals/results.md and evals/results.json. LLM labels are cached in evals/llm_labels.json so the
+Writes evals/results_<set>.md/.json. LLM labels are cached in evals/llm_labels_<set>.json so the
 numbers can be re-scored without new API calls (delete the file to re-query).
 """
 
@@ -45,15 +45,17 @@ def pct(x: float) -> str:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-llm", action="store_true")
+    ap.add_argument("--set", choices=["dev", "heldout"], default="dev")
     args = ap.parse_args()
     load_dotenv(HERE.parent / ".env")
 
-    items = yaml.safe_load((HERE / "requirements.yaml").read_text(encoding="utf-8"))["items"]
+    source = {"dev": "requirements.yaml", "heldout": "heldout.yaml"}[args.set]
+    items = yaml.safe_load((HERE / source).read_text(encoding="utf-8"))["items"]
     texts = [i["text"] for i in items]
     gold = [set(i["gold"]) for i in items]
     systems = {"Rules only": [{f.rule for f in check(t)} for t in texts]}
     if not args.no_llm:
-        cache = HERE / "llm_labels.json"
+        cache = HERE / f"llm_labels_{args.set}.json"
         if cache.exists() and json.loads(cache.read_text())["texts"] == texts:
             llm = json.loads(cache.read_text())["labels"]
         else:
@@ -64,9 +66,10 @@ def main() -> None:
 
     results = {name: score(gold, pred) for name, pred in systems.items()}
     n_def = sum(bool(g) for g in gold)
-    lines = ["# SpecCheck evaluation", "",
+    title = {"dev": "development set (rules were tuned on it)", "heldout": "held-out set (written after the rules were frozen)"}
+    lines = [f"# SpecCheck evaluation: {title[args.set]}", "",
              f"{len(items)} labelled requirements ({n_def} with at least one defect, {len(items) - n_def} clean), "
-             f"{sum(len(g) for g in gold)} defects in total. Source: `evals/requirements.yaml`.", "",
+             f"{sum(len(g) for g in gold)} defects in total. Source: `evals/{source}`.", "",
              "| System | Precision | Recall | F1 | Item accuracy (flag / don't flag) | False alarms on clean requirements |",
              "|---|---|---|---|---|---|"]
     for name, r in results.items():
@@ -78,8 +81,8 @@ def main() -> None:
     misses = [(t, sorted(g - p), sorted(p - g)) for t, g, p in zip(texts, gold, systems["Rules only"]) if g != p]
     lines += ["", "## Where the rules disagree with the labels", "", "| Requirement | Missed | Extra |", "|---|---|---|"]
     lines += [f"| {t} | {', '.join(m) or '-'} | {', '.join(e) or '-'} |" for t, m, e in misses]
-    (HERE / "results.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    (HERE / "results.json").write_text(json.dumps(results, indent=1), encoding="utf-8")
+    (HERE / f"results_{args.set}.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (HERE / f"results_{args.set}.json").write_text(json.dumps(results, indent=1), encoding="utf-8")
     print("\n".join(lines[:8 + len(results)]))
 
 
